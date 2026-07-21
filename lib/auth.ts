@@ -1,30 +1,23 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "@prisma/client";
-import { Pool } from "pg";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { nextCookies } from "better-auth/next-js";
 
-// 1. Initialiser le pool de connexion PostgreSQL
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-// 2. Créer l'adaptateur Prisma obligatoire
-const adapter = new PrismaPg(pool);
-
-// 3. Passer l'adaptateur au constructeur (résout l'erreur)
-const prisma = new PrismaClient({ adapter });
+import { prisma } from "@/lib/prisma";
 
 export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
-  emailAndPassword: {
-    enabled: true,
-    autoSignIn: false 
-  },
-  trustedOrigins: [
-    "http://localhost:3000",
-    "http://localhost:3001"
-  ],
-   plugins: [nextCookies()]
+    database: prismaAdapter(prisma, {
+        provider: "postgresql",
+    }),
+
+    emailAndPassword: {
+        enabled: true,
+        autoSignIn: false,
+    },
+
+    trustedOrigins: [
+        "http://localhost:3000",
+        "http://localhost:3001",
+    ],
+
+    plugins: [nextCookies()],
 });

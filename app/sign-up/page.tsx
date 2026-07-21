@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
-import {Loader2} from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 
 export default function signUp_page() {
-    const router = useRouter(); 
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -75,13 +75,13 @@ export default function signUp_page() {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const fullName = `${name.firstName} ${name.lastName}`;
-      
+
 
         try {
 
             setLoading(true);
             const result = await authClient.signUp.email({
-                name : fullName,
+                name: fullName,
                 email,
                 password
             });
@@ -89,7 +89,7 @@ export default function signUp_page() {
             console.log(result)
             router.push("/sign-in");
 
-        }catch (error) {
+        } catch (error) {
             console.error("Erreur lors de l'inscription :", error)
         }
 
@@ -107,28 +107,28 @@ export default function signUp_page() {
                             const value = e.target.value;
                             setEmail(value);
                             validateEmail(value);
-                        }} 
+                        }}
                         required
-                        />
+                    />
                     {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                 </fieldset>
 
                 <fieldset className="fieldset">
                     <label className="label" htmlFor="firstName">Prénom</label>
-                    <input type="text" id="firstName" className="input focus:input-primary w-full" placeholder="Pascal" required 
-                    onChange={ (e) => {
-                        const value = e.target.value;
-                        setName(prev => ({ ...prev, firstName: value }));
-                    }} />
+                    <input type="text" id="firstName" className="input focus:input-primary w-full" placeholder="Pascal" required
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setName(prev => ({ ...prev, firstName: value }));
+                        }} />
                 </fieldset>
 
                 <fieldset className="fieldset">
                     <label className="label" htmlFor="lastName">Nom</label>
-                    <input type="text" id="lastName" className="input focus:input-primary w-full" placeholder="Kamgang" required 
-                    onChange={ (e) => {
-                        const value = e.target.value;
-                        setName(prev => ({ ...prev, lastName: value }));
-                    }} />
+                    <input type="text" id="lastName" className="input focus:input-primary w-full" placeholder="Kamgang" required
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setName(prev => ({ ...prev, lastName: value }));
+                        }} />
                 </fieldset>
 
                 <fieldset className="fieldset">
@@ -138,9 +138,9 @@ export default function signUp_page() {
                             const value = e.target.value;
                             setPassword(value);
                             validatePassword(value);
-                        }} 
+                        }}
                         required
-                        />
+                    />
                     {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                 </fieldset>
 
@@ -157,6 +157,9 @@ export default function signUp_page() {
                         "S'inscrire"
                     )}
                 </button>
+                <a href="/sign-in" className="text-center text-sm text-primary hover:underline">
+                    Déjà un compte ? Se connecter
+                </a>
             </form>
         </div>
     )
