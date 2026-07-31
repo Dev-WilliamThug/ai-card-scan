@@ -15,30 +15,46 @@ function cleanValues(values: unknown): string[] {
 }
 
 export async function GET(request: Request) {
-    try {
-        const query = new URL(request.url).searchParams.get("query")?.trim() ?? "";
-        const contacts = await prisma.contact.findMany({
-            where: query ? {
-                OR: [
-                    { firstName: { contains: query, mode: "insensitive" } },
-                    { lastName: { contains: query, mode: "insensitive" } },
-                    { company: { is: { name: { contains: query, mode: "insensitive" } } } },
-                    { tag: { is: { name: { contains: query, mode: "insensitive" } } } },
-                    { emails: { some: { email: { contains: query, mode: "insensitive" } } } },
-                    { phones: { some: { telephone: { contains: query, mode: "insensitive" } } } },
-                ],
-            } : undefined,
-            include: includeRelations,
-            orderBy: { createdAt: "desc" },
-        });
+  try {
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get("query")?.trim() ?? "";
+    const tagId = searchParams.get("tagId")?.trim() ?? "";
 
-        return NextResponse.json(contacts);
-    } catch (error) {
-        console.error("Erreur lors de la récupération des contacts :", error);
-        return NextResponse.json({ success: false, message: "Impossible de récupérer les contacts." }, { status: 500 });
+    
+    const whereClause: any = {};
+
+    
+    if (query) {
+      whereClause.OR = [
+        { firstName: { contains: query, mode: "insensitive" } },
+        { lastName: { contains: query, mode: "insensitive" } },
+        { company: { is: { name: { contains: query, mode: "insensitive" } } } },
+        { emails: { some: { email: { contains: query, mode: "insensitive" } } } },
+        { phones: { some: { telephone: { contains: query, mode: "insensitive" } } } },
+      ];
     }
-}
 
+
+    if (tagId) {
+      whereClause.tag_id = tagId; 
+    }
+
+   
+    const contacts = await prisma.contact.findMany({
+      where: whereClause,
+      include: includeRelations,
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(contacts);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des contacts :", error);
+    return NextResponse.json(
+      { success: false, message: "Impossible de récupérer les contacts." },
+      { status: 500 }
+    );
+  }
+}
 export async function POST(request: Request) {
     try {
         const body = await request.json();

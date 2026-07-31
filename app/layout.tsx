@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+
 export const metadata: Metadata = {
   title: "ScanCard AI"
 };
@@ -12,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" data-theme="bumblebee" >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-screen flex flex-col">{children}</body>
     </html>
   );
 }

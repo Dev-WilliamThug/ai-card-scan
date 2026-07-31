@@ -1,6 +1,6 @@
 "use client"
 
-import { Building2, UserRound, Scan } from "lucide-react"
+import { UserRound, Scan } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -8,20 +8,18 @@ function BottomBar() {
     const pathname = usePathname();
 
     const items = [
-        { href: "/companies", icon: Building2, label: "Entreprises" },
         { href: "/scan", icon: Scan, label: "Scanner", isHero: true },
         { href: "/contacts", icon: UserRound, label: "Contacts" },
     ];
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-[env(safe-area-inset-bottom)]">
-            {/* Effet Blur Glassmorphism avec bordure subtile */}
-            <div className="mx-auto flex h-16 max-w-md items-center justify-around border-t border-slate-200/60 bg-white/80 px-4 backdrop-blur-md dark:border-slate-800/60 dark:bg-slate-950/80">
+            {/* Arrière-plan légèrement grisé (bg-slate-100/90) pour contraster avec le fond blanc */}
+            <div className="mx-auto flex h-16 max-w-md items-center justify-around border-t border-slate-200 bg-slate-100/90 px-4 backdrop-blur-md shadow-lg dark:border-slate-800/80 dark:bg-slate-950/80">
                 {items.map((item) => {
                     const Icon = item.icon;
                     const isActive = pathname === item.href;
 
-    
                     if (item.isHero) {
                         return (
                             <Link
@@ -55,7 +53,6 @@ function BottomBar() {
                                     : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                             }`}
                         >
-                            {/* Pilule lumineuse d'indication d'activation */}
                             {isActive && (
                                 <span className="absolute -top-1 h-1 w-8 rounded-full bg-primary transition-all duration-300" />
                             )}

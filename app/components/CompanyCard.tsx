@@ -6,11 +6,10 @@ import { Company } from '@prisma/client'
 
 interface CompanyCardProps {
   company: Company
-  onEdit: (company: Company) => void
   onDelete: (id: string) => void
   isDeleting: boolean
 }
-export default function CompanyCard({ company, onEdit, onDelete, isDeleting }: CompanyCardProps) {
+export default function CompanyCard({ company, onDelete, isDeleting }: CompanyCardProps/*{ company, onEdit, onDelete, onToggleFavorite }*/) {
 
   // Génère les deux premières lettres de l'entreprise
   const words = company.name ? company.name.trim().split(/\s+/) : [];
@@ -20,7 +19,7 @@ export default function CompanyCard({ company, onEdit, onDelete, isDeleting }: C
   const finalInitials = initials.toUpperCase();
 
   return (
-    <div className="flex flex-row md:flex-col items-center gap-4 p-4 md:p-6 bg-white dark:bg-base-150 border border-gray-100 dark:border-gray-800 shadow-md rounded-2xl w-full max-w-full md:max-w-xs transition-all hover:shadow-lg relative">
+    <div className="flex flex-row md:flex-col items-center gap-4 p-4 md:p-6 bg-white dark:bg-base-150 border border-gray-100 dark:border-gray-800 shadow-md rounded-2xl w-full max-w-full md:max-w-xs  hover:shadow-lg relative shrink-0 md:w-full md:shrink transition-all">
 
       <div className="flex items-center justify-center h-14 w-14 md:h-20 md:w-20 rounded-full bg-secondary/10 text-secondary font-bold text-lg md:text-xl shrink-0">
         {finalInitials}
@@ -60,11 +59,9 @@ export default function CompanyCard({ company, onEdit, onDelete, isDeleting }: C
 
       <div className="flex flex-col md:flex-row items-center gap-1.5 md:gap-2 shrink-0 md:w-full md:justify-center md:mt-4">
         <button
-          type="button"
-          onClick={() => onEdit(company)}
+          // onClick={onEdit}
           className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-lg transition-all duration-150 active:scale-90 active:bg-blue-100 dark:active:bg-blue-900/50"
           title="Modifier l'entreprise"
-          aria-label={`Modifier ${company.name}`}
         >
           <Pencil className="w-4 h-4 transition-transform active:rotate-12" />
         </button>

@@ -3,3 +3,9 @@
   themes: bumblebee --default;
 }
 
+@layer base {
+  body {
+    /* Fond gris doux en mode clair, et anthracite profond en mode sombre */
+    @apply bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen;
+  }
+}

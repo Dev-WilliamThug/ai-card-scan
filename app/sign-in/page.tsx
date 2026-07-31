@@ -8,6 +8,8 @@ import { Loader2 } from "lucide-react";
 
 export default function signIn_page() {
     const [email, setEmail] = useState("");
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -16,10 +18,12 @@ export default function signIn_page() {
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 
         event.preventDefault();
+        setError("");
+        setSuccess("");
+        setLoading(true);
 
         try {
 
-            setLoading(true);
             const result = await authClient.signIn.email({
                 email,
                 password
@@ -27,15 +31,13 @@ export default function signIn_page() {
 
 
             if (result.error) {
-                console.log(result.error);
+
+                setError(result.error.message ?? "Une erreur est survenue.");
                 return;
             }
 
-
-            console.log("Connexion réussie", result);
-
-
-            router.push("/dashboard");
+            setSuccess("Connexion réussie.");
+            router.push("/contacts");
 
 
         } catch (error) {
@@ -45,6 +47,8 @@ export default function signIn_page() {
                 error
             );
 
+        } finally {
+            setLoading(false);
         }
     }
     return (
@@ -75,7 +79,17 @@ export default function signIn_page() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </fieldset>
+                {error && (
+                    <div className="alert alert-error">
+                        <span>{error}</span>
+                    </div>
+                )}
 
+                {success && (
+                    <div className="alert alert-success">
+                        <span>{success}</span>
+                    </div>
+                )}
                 <button className="btn btn-soft btn-primary w-full mt-2" type="submit" disabled={loading}>
                     {loading ? (
                         <>
