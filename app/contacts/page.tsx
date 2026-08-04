@@ -12,19 +12,19 @@ import { Tag } from "@prisma/client";
 
 export default function ContactsPage() {
   const modalRef = useRef<HTMLDialogElement>(null);
-  
+
   const [contacts, setContacts] = useState<ContactDetails[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
-  
- 
+
+
   const [searchInput, setSearchInput] = useState("");
   const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
 
 
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  
-  
+
+
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [contactToEdit, setContactToEdit] = useState<ContactDetails | null>(null);
@@ -63,7 +63,7 @@ export default function ContactsPage() {
 
       const response = await fetch(`/api/contact?${queryParams.toString()}`);
       if (!response.ok) throw new Error("Impossible de récupérer les contacts.");
-      
+
       const data = await response.json();
       setContacts(data);
     } catch (error) {
@@ -134,7 +134,7 @@ export default function ContactsPage() {
       setDeletingContactId(id);
       const response = await fetch(`/api/contact/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("La suppression a échoué.");
-      
+
       setContacts((prev) => prev.filter((c) => c.contact_id !== id));
       if (isDetailModalOpen) setIsDetailModalOpen(false);
     } catch (error) {
@@ -150,7 +150,7 @@ export default function ContactsPage() {
       <Header />
       <SideBar />
       <main className="flex flex-col gap-4 py-20 px-5 md:pl-72">
-        
+
         <div className="flex justify-between gap-1 items-center w-full">
           <label className="input input-bordered flex-1 flex items-center gap-2 rounded-xl bg-white dark:bg-base-150 shadow-xs">
             <UserSearch className="h-5 w-5 text-gray-400 shrink-0" />
@@ -175,18 +175,17 @@ export default function ContactsPage() {
           </button>
         </div>
 
-       
-       
+
+
         {tags.length > 0 && (
           <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
-          
+
             <button
               onClick={() => setSelectedTagId(null)}
-              className={`inline-flex items-center gap-1.5 shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                selectedTagId === null
+              className={`inline-flex items-center gap-1.5 shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${selectedTagId === null
                   ? "bg-slate-900 text-white dark:bg-slate-900 dark:text-slate-300 shadow-xs hover:cursor-pointer"
                   : "dark:bg-slate-900/80 text-slate-600 dark:bg-base-150 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-100 hover:text-slate-900 hover:cursor-pointer"
-              }`}
+                }`}
             >
               <TagIcon className="w-3 h-3" />
               Tous
@@ -198,11 +197,10 @@ export default function ContactsPage() {
                 <button
                   key={tag.tag_id}
                   onClick={() => setSelectedTagId(isSelected ? null : tag.tag_id)}
-                  className={`inline-flex items-center gap-2 shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all ${
-                    isSelected
+                  className={`inline-flex items-center gap-2 shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all ${isSelected
                       ? "border-primary bg-primary/10 text-primary font-semibold ring-2 ring-primary/20 hover:cursor-pointer"
                       : "bg-slate-900 text-white dark:bg-slate-900 dark:text-slate-300 shadow-xs hover:bg-slate-100 hover:text-slate-900 hover:cursor-pointer"
-                  }`}
+                    }`}
                 >
                   <span>{tag.name}</span>
                   <span
@@ -223,7 +221,7 @@ export default function ContactsPage() {
           </div>
         ) : (
           <>
-            
+
             {contacts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {contacts.map((contact) => (

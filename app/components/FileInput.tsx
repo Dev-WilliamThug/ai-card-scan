@@ -70,7 +70,7 @@ export function FileInput({ onScanComplete }: FileInputProps) {
       if (!resData.success) {
         throw new Error("Données inexistantes.");
       }
-      console.log("Données extraites :", resData.data);
+/*       console.log("Données extraites :", resData.data); */
       if (onScanComplete) {
         onScanComplete(resData.data);
       }

@@ -86,7 +86,6 @@ export default function signUp_page() {
                 password
             });
 
-            console.log(result)
             router.push("/sign-in");
 
         } catch (error) {

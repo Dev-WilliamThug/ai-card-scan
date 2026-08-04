@@ -33,7 +33,7 @@ export async function POST(request: Request) {
                       "emails": ["email@exemple.com","email2@exemple.com"],
                       "phones": ["+33123456789","+237609647289"]
                     }
-                    Si un champ n'est pas trouvé, laisse une chaîne vide "" ou un tableau vide [].`;
+                    Si un champ n'est pas trouvé ou bien tu n'arrives pas facilement à le lire, laisse une chaîne vide "" ou un tableau vide [].`;
 
 
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {

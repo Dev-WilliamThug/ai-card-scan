@@ -14,7 +14,7 @@ export default function scan_page() {
         setScannedData(data);
     }
     const handleSaved = (newContact: ContactDetails) => {
-        console.log("Contact sauvegardé avec succès :", newContact);
+/*         console.log("Contact sauvegardé avec succès :", newContact); */
         setScannedData(null);
     };
     return (

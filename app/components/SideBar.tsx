@@ -13,7 +13,7 @@ function SideBar() {
     ];
 
     return (
-        /* Modifié : bg-slate-50/90 pour donner une légère teinte grise contrastante par rapport à la page */
+        
         <aside className="hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 border-r border-slate-200 bg-slate-50/90 dark:border-slate-800 dark:bg-slate-950/80 backdrop-blur-md z-40 p-4 justify-between">
             <div className="space-y-6">
                 
@@ -23,7 +23,7 @@ function SideBar() {
                     </div>
                     <div>
                         <h1 className="font-bold text-base text-slate-900 dark:text-slate-100 leading-tight">
-                            AI-ScanCard
+                            AI-Card Scan
                         </h1>
                         <p className="text-[11px] text-slate-500 dark:text-slate-400">
                             Digitalisation IA
