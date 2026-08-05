@@ -4,9 +4,10 @@ import { BottomBar } from "@/app/components/BottomBar";
 import { Header } from "@/app/components/Header";
 import { ContactCard } from "@/app/components/ContactCard";
 import { FormContact, type ContactDetails } from "@/app/components/FormContact";
+import { FormTag } from "@/app/components/FormTag";
 import { ContactDetailModal, Contact } from "@/app/components/ContactViewModal";
 import { SideBar } from "@/app/components/SideBar";
-import { UserRoundPlus, UserSearch, Loader, Tag as TagIcon, X } from "lucide-react";
+import { UserRoundPlus, UserSearch, Loader, Tag as TagIcon, X, Plus } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Tag } from "@prisma/client";
 
@@ -24,6 +25,7 @@ export default function ContactsPage() {
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
 
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -37,21 +39,24 @@ export default function ContactsPage() {
     setIsDetailModalOpen(true);
   };
 
-  // --- Chargement des Tags (1 seule fois) ---
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const response = await fetch("/api/tag");
-        if (response.ok) {
-          const data = await response.json();
-          setTags(data);
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des tags :", error);
+  const handleCreateTag = () => {
+    setIsTagModalOpen(true);
+  }
+  const fetchTags = useCallback(async () => {
+    try {
+      const response = await fetch("/api/tag");
+      if (response.ok) {
+        const data = await response.json();
+        setTags(data);
       }
-    };
-    fetchTags();
+    } catch (error) {
+      console.error("Erreur lors de la récupération des tags :", error);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchTags();
+  }, [fetchTags]);
 
   // --- Chargement des Contacts (Recherche + Filtre Tag) ---
   const loadContacts = useCallback(async (isSilent = false) => {
@@ -74,7 +79,7 @@ export default function ContactsPage() {
     }
   }, [searchInput, selectedTagId]);
 
-  // Déclenchement automatique de la recherche avec contrôleur d'annulation (AbortController)
+
   useEffect(() => {
     const controller = new AbortController();
     setIsSearching(true);
@@ -176,44 +181,54 @@ export default function ContactsPage() {
         </div>
 
 
+        <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
 
-        {tags.length > 0 && (
-          <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
+          <button
+            onClick={() => setSelectedTagId(null)}
+            className={`inline-flex items-center gap-1.5 shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer ${selectedTagId === null
+              ? "bg-slate-900 text-white shadow-xs dark:bg-slate-100 dark:text-slate-900"
+              : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50 hover:text-slate-900 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+              }`}
+          >
+            <TagIcon className="w-3 h-3" />
+            Tous
+          </button>
 
-            <button
-              onClick={() => setSelectedTagId(null)}
-              className={`inline-flex items-center gap-1.5 shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${selectedTagId === null
-                  ? "bg-slate-900 text-white dark:bg-slate-900 dark:text-slate-300 shadow-xs hover:cursor-pointer"
-                  : "dark:bg-slate-900/80 text-slate-600 dark:bg-base-150 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-100 hover:text-slate-900 hover:cursor-pointer"
-                }`}
-            >
-              <TagIcon className="w-3 h-3" />
-              Tous
-            </button>
 
-            {tags.map((tag) => {
-              const isSelected = selectedTagId === tag.tag_id;
-              return (
-                <button
-                  key={tag.tag_id}
-                  onClick={() => setSelectedTagId(isSelected ? null : tag.tag_id)}
-                  className={`inline-flex items-center gap-2 shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all ${isSelected
-                      ? "border-primary bg-primary/10 text-primary font-semibold ring-2 ring-primary/20 hover:cursor-pointer"
-                      : "bg-slate-900 text-white dark:bg-slate-900 dark:text-slate-300 shadow-xs hover:bg-slate-100 hover:text-slate-900 hover:cursor-pointer"
-                    }`}
-                >
-                  <span>{tag.name}</span>
-                  <span
-                    className="h-2 w-2 rounded-full shrink-0"
-                    style={{ backgroundColor: tag.color }}
-                  />
-                  {isSelected && <X className="w-3 h-3 ml-0.5 opacity-60" />}
-                </button>
-              );
-            })}
-          </div>
-        )}
+          {tags.map((tag) => {
+            const isSelected = selectedTagId === tag.tag_id;
+            return (
+              <button
+                key={tag.tag_id}
+                onClick={() => setSelectedTagId(isSelected ? null : tag.tag_id)}
+                className={`inline-flex items-center gap-2 shrink-0 rounded-full px-3.5 py-1.5 text-xs transition-all cursor-pointer ${isSelected
+                  ? "border border-primary bg-primary/10 text-primary font-semibold ring-2 ring-primary/20 dark:bg-primary/20 dark:text-primary"
+                  : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50 hover:text-slate-900 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 font-medium"
+                  }`}
+              >
+                <span>{tag.name}</span>
+                <span
+                  className="h-2 w-2 rounded-full shrink-0"
+                  style={{ backgroundColor: tag.color }}
+                />
+                {isSelected && <X className="w-3 h-3 ml-0.5 opacity-70" />}
+              </button>
+            );
+          })}
 
+          <button
+            onClick={() => setIsTagModalOpen(true)}
+            className="inline-flex items-center gap-1.5 shrink-0 rounded-full border border-dashed border-slate-300 bg-slate-50/60 px-3.5 py-1.5 text-xs font-medium text-slate-600 transition-all hover:border-primary hover:bg-primary/5 hover:text-primary dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-400 dark:hover:border-primary dark:hover:text-primary cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Créer un tag
+          </button>
+          <FormTag
+            isOpen={isTagModalOpen}
+            onClose={() => setIsTagModalOpen(false)}
+            onTagCreated={fetchTags}
+          />
+        </div>
         {isInitialLoading ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-3 py-20 text-slate-400">
             <Loader className="w-8 h-8 animate-spin text-primary" />

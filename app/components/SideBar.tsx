@@ -57,7 +57,7 @@ function SideBar() {
                 </nav>
             </div>
 
-            <div className="border-t border-slate-200 dark:border-slate-800/60 pt-4 space-y-1">
+{/*             <div className="border-t border-slate-200 dark:border-slate-800/60 pt-4 space-y-1">
                 <Link
                     href="/settings"
                     className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-900 transition-colors"
@@ -65,7 +65,7 @@ function SideBar() {
                     <Settings className="h-4 w-4" />
                     <span>Paramètres</span>
                 </Link>
-            </div>
+            </div> */}
         </aside>
     );
 }
