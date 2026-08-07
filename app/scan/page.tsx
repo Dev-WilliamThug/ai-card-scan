@@ -3,18 +3,20 @@ import { Header } from "@/app/components/Header";
 import { BottomBar } from "@/app/components/BottomBar";
 import { ButtonScan } from "@/app/components/ButtonScan";
 import { FileInput } from "@/app/components/FileInput";
-import { SideBar } from "../components/SideBar";
-import { useState} from "react";
+import { SideBar } from "@/app/components/SideBar";
+import { useState } from "react";
+import {useRouter} from "next/navigation";
 import { FormContact, ScannedData, ContactDetails } from "@/app/components/FormContact";
 
 export default function scan_page() {
     const [scannedData, setScannedData] = useState<ScannedData | null>(null);
+    const router = useRouter()
     const handleScanComplete = (data: ScannedData) => {
         setScannedData(data);
     }
     const handleSaved = (newContact: ContactDetails) => {
-/*         console.log("Contact sauvegardé avec succès :", newContact); */
         setScannedData(null);
+        router.replace("/contacts")
     };
     return (
         <>

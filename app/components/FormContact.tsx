@@ -2,10 +2,9 @@
 
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
-import type { Company, Contact, Email, Phone, Tag } from "@prisma/client";
+import type { Contact, Email, Phone, Tag } from "@prisma/client";
 
 export type ContactDetails = Contact & {
-    company: Company | null;
     tag: Tag | null;
     emails: Email[];
     phones: Phone[];
@@ -35,7 +34,6 @@ function removeAt(values: string[], index: number) {
 
 function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProps) {
     const [loading, setLoading] = useState(false);
-    const [companies, setCompanies] = useState<Company[]>([]);
     const [tags, setTags] = useState<Tag[]>([]);
     const [firstName, setFirstName] = useState(contact?.firstName ?? scannedData?.firstName ?? "");
     const [lastName, setLastName] = useState(contact?.lastName ?? scannedData?.lastName ?? "");
@@ -46,66 +44,29 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
         contact?.phones.map(({ telephone }) => telephone) ?? (scannedData?.phones?.length ? scannedData.phones : [""])
     );
     const [jobTitle, setJobTitle] = useState(contact?.jobTitle ?? scannedData?.jobTitle ?? "");
-    const [companyId, setCompanyId] = useState(contact?.company_id ?? "");
+    
+    const [companyName, setCompanyName] = useState(contact?.companyName ?? scannedData?.companyName ?? "");
+    const [companyAddress, setCompanyAddress] = useState(contact?.companyAddress ?? scannedData?.companyAddress ?? "");
+    const [companyWebsite, setCompanyWebsite] = useState(contact?.companyWebsite ?? scannedData?.companyWebsite ?? "");
+    
     const [tagId, setTagId] = useState(contact?.tag_id ?? "");
     const [message, setMessage] = useState("");
 
     async function loadData() {
         try {
-            const [companiesResponse, tagsResponse] = await Promise.all([
-                fetch("/api/company"),
-                fetch("/api/tag")
-            ]);
+            const tagsResponse = await fetch("/api/tag");
+            if (!tagsResponse.ok) throw new Error("Chargement des tags impossible");
 
-            if (!companiesResponse.ok || !tagsResponse.ok) throw new Error("Chargement impossible");
-
-            const fetchedCompanies: Company[] = await companiesResponse.json();
             const fetchedTags: Tag[] = await tagsResponse.json();
-
-            setCompanies(fetchedCompanies);
             setTags(fetchedTags);
-
-            if (scannedData?.companyName) {
-                const companyNameTrimmed = scannedData.companyName.trim().toLowerCase();
-
-                const matchedCompany = fetchedCompanies.find(
-                    (c) => c.name.trim().toLowerCase() === companyNameTrimmed
-                );
-
-                if (matchedCompany) {
-                    setCompanyId(matchedCompany.company_id);
-                } else {
-                    try {
-                        const response = await fetch("/api/company", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                name: scannedData.companyName.trim(),
-                                address: scannedData.companyAddress || null,
-                                website: scannedData.companyWebsite || null,
-                            }),
-                        });
-
-                        if (response.ok) {
-                            const createdCompany: Company = await response.json();
-                            setCompanies((prev) => [...prev, createdCompany]);
-                            setCompanyId(createdCompany.company_id);
-                        } else {
-                            console.error("Impossible d'ajouter cette nouvelle entreprise");
-                        }
-                    } catch (err) {
-                        console.error("Erreur création entreprise :", err);
-                    }
-                }
-            }
         } catch (err) {
-            console.error("Erreur chargement des données :", err);
+            console.error("Erreur chargement des tags :", err);
         }
     }
 
     useEffect(() => {
         loadData();
-    }, [contact, scannedData]);
+    }, []);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -115,7 +76,17 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
             const response = await fetch(contact ? `/api/contact/${contact.contact_id}` : "/api/contact", {
                 method: contact ? "PATCH" : "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ firstName, lastName, jobTitle, companyId, tagId, emails, phones }),
+                body: JSON.stringify({ 
+                    firstName, 
+                    lastName, 
+                    jobTitle, 
+                    companyName, 
+                    companyAddress, 
+                    companyWebsite, 
+                    tagId, 
+                    emails, 
+                    phones 
+                }),
             });
             const result = await response.json();
             if (!response.ok) throw new Error(result.message ?? "Une erreur est survenue.");
@@ -248,7 +219,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
             {/* Poste */}
             <fieldset className="fieldset space-y-1.5">
                 <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="jobTitle">
-                    Poste
+                    Poste / Fonction
                 </label>
                 <input 
                     type="text" 
@@ -259,24 +230,49 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                 />
             </fieldset>
 
-            {/* Entreprise */}
+            {/* Nom de l'entreprise */}
             <fieldset className="fieldset space-y-1.5">
-                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="company">
-                    Entreprise
+                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyName">
+                    Nom de l'entreprise
                 </label>
-                <select 
-                    id="company" 
-                    className="select select-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl" 
-                    value={companyId} 
-                    onChange={(event) => setCompanyId(event.target.value)}
-                >
-                    <option value="" key="undefined">Aucune entreprise</option>
-                    {companies.map((company) => (
-                        <option key={company.company_id} value={company.company_id}>
-                            {company.name}
-                        </option>
-                    ))}
-                </select>
+                <input 
+                    type="text" 
+                    id="companyName" 
+                    className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl" 
+                    placeholder="Ex: Mayem Solutions"
+                    value={companyName} 
+                    onChange={(event) => setCompanyName(event.target.value)} 
+                />
+            </fieldset>
+
+            {/* Adresse de l'entreprise */}
+            <fieldset className="fieldset space-y-1.5">
+                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyAddress">
+                    Adresse de l'entreprise
+                </label>
+                <input 
+                    type="text" 
+                    id="companyAddress" 
+                    className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl" 
+                    placeholder="Ex: 12 Rue des Entreprises, Paris"
+                    value={companyAddress} 
+                    onChange={(event) => setCompanyAddress(event.target.value)} 
+                />
+            </fieldset>
+
+            {/* Site web de l'entreprise */}
+            <fieldset className="fieldset space-y-1.5">
+                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyWebsite">
+                    Site web de l'entreprise
+                </label>
+                <input 
+                    type="text" 
+                    id="companyWebsite" 
+                    className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl" 
+                    placeholder="Ex: https://entreprise.com"
+                    value={companyWebsite} 
+                    onChange={(event) => setCompanyWebsite(event.target.value)} 
+                />
             </fieldset>
 
             {/* Tag */}

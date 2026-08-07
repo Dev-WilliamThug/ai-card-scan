@@ -58,7 +58,6 @@ export default function ContactsPage() {
     fetchTags();
   }, [fetchTags]);
 
-  // --- Chargement des Contacts (Recherche + Filtre Tag) ---
   const loadContacts = useCallback(async (isSilent = false) => {
     if (!isSilent) setIsSearching(true);
     try {

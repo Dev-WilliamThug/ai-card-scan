@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState  } from "react";
 import { Loader2, Sparkles, CheckCircle2, AlertCircle, Wand2, ArrowRight } from "lucide-react";
 import { processAndCompressImage } from "@/lib/vision/compressCard";
 
@@ -45,6 +45,7 @@ export function FileInput({ onScanComplete }: FileInputProps) {
 
 
   async function handleStartScan() {
+    
     if (!file) return;
     setIsScanning(true);
     setError(null);
@@ -74,6 +75,7 @@ export function FileInput({ onScanComplete }: FileInputProps) {
       if (onScanComplete) {
         onScanComplete(resData.data);
       }
+    
     } catch (err: any) {
       setError(err.message)
     } finally {

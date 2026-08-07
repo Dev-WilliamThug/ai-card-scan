@@ -12,43 +12,40 @@ datasource db {
 }
 
 model User {
-  id       String    @id @default(uuid())
+  id            String    @id @default(uuid())
   name          String
   email         String    @unique
+  role          String    @default("user")
+  banned        Boolean?  @default(false)
+  banReason     String?
+  banExpires    DateTime?
   createdAt     DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  updatedAt     DateTime  @updatedAt
   emailVerified Boolean   @default(false)
   sessions      Session[]
   accounts      Account[]
+
+  image String?
 
   @@map("user")
 }
 
 model Contact {
-  contact_id String   @id @default(uuid())
+  contact_id String  @id @default(uuid())
   firstName  String
   lastName   String?
   jobTitle   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
 
-  company_id String?
-  tag_id     String?
-
-  company     Company?     @relation(fields: [company_id], references: [company_id])
-  tag         Tag?         @relation(fields: [tag_id], references: [tag_id])
-  emails      Email[]
-  phones      Phone[]
-  socialLinks SocialLink[]
-}
-
-model Company {
-  company_id String  @id @default(uuid())
-  name       String
-  address    String?
-  website    String?
-
-  contacts Contact[]
+  companyName    String?
+  companyAddress String?
+  companyWebsite String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  tag_id         String?
+  tag            Tag?         @relation(fields: [tag_id], references: [tag_id])
+  emails         Email[]
+  phones         Phone[]
+  socialLinks    SocialLink[]
 }
 
 model Email {
@@ -104,6 +101,8 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@index([userId])

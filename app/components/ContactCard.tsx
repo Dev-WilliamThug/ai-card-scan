@@ -40,7 +40,6 @@ export function ContactCard({
 
         {/* Infos du contact */}
         <div className="flex-1 min-w-0 flex flex-col md:items-center w-full">
-          {/* Correction texte sombre : text-slate-900 dark:text-slate-100 */}
           <h3 className="font-bold text-slate-900 dark:text-slate-100 md:text-lg truncate w-full md:text-center group-hover:text-primary transition-colors">
             {fullName}
           </h3>
@@ -51,9 +50,10 @@ export function ContactCard({
             </p>
           )}
 
-          {contact.company ? (
+          {/* Affichage direct de companyName */}
+          {contact.companyName ? (
             <p className="text-xs text-slate-400 dark:text-slate-400 font-medium truncate w-full md:text-center mt-0.5">
-              {contact.company.name}
+              {contact.companyName}
             </p>
           ) : (
             <p className="text-xs text-slate-400/70 dark:text-slate-500 italic font-normal truncate w-full md:text-center mt-0.5">
@@ -91,9 +91,8 @@ export function ContactCard({
           </div>
         </div>
 
-        {/* Barre d'actions (Séparateur et Boutons avec Hover dédiés Dark Mode) */}
+        {/* Barre d'actions */}
         <div className="flex flex-col md:flex-row items-center gap-1 md:gap-2 shrink-0 md:w-full md:justify-center md:mt-3 border-l md:border-l-0 md:border-t border-slate-100 dark:border-slate-800/80 pl-3 md:pl-0 md:pt-3">
-
           <button
             type="button"
             onClick={(e) => handleAction(e, () => onView(contact))}

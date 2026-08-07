@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 const includeRelations = {
-    company: true,
     tag: true,
     emails: { orderBy: { createdAt: "asc" } },
     phones: { orderBy: { createdAt: "asc" } },
@@ -23,13 +22,16 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
         const emails = cleanValues(body.emails);
         const phones = cleanValues(body.phones);
+
         const contact = await prisma.contact.update({
             where: { contact_id: id },
             data: {
                 firstName,
                 lastName: typeof body.lastName === "string" ? body.lastName.trim() || null : null,
                 jobTitle: typeof body.jobTitle === "string" ? body.jobTitle.trim() || null : null,
-                company_id: typeof body.companyId === "string" && body.companyId ? body.companyId : null,
+                companyName: typeof body.companyName === "string" ? body.companyName.trim() || null : null,
+                companyAddress: typeof body.companyAddress === "string" ? body.companyAddress.trim() || null : null,
+                companyWebsite: typeof body.companyWebsite === "string" ? body.companyWebsite.trim() || null : null,
                 tag_id: typeof body.tagId === "string" && body.tagId ? body.tagId : null,
                 emails: { deleteMany: {}, create: emails.map((email, index) => ({ email, isPrimary: index === 0 })) },
                 phones: { deleteMany: {}, create: phones.map((telephone, index) => ({ telephone, isPrimary: index === 0 })) },
@@ -42,7 +44,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         return NextResponse.json({ success: false, message: "Impossible de modifier ce contact." }, { status: 500 });
     }
 }
-
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;

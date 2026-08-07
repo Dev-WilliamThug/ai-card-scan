@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 const includeRelations = {
-    company: true,
     tag: true,
     emails: { orderBy: { createdAt: "asc" } },
     phones: { orderBy: { createdAt: "asc" } },
@@ -28,7 +27,7 @@ export async function GET(request: Request) {
       whereClause.OR = [
         { firstName: { contains: query, mode: "insensitive" } },
         { lastName: { contains: query, mode: "insensitive" } },
-        { company: { is: { name: { contains: query, mode: "insensitive" } } } },
+        { companyName: { contains: query, mode: "insensitive" } },
         { emails: { some: { email: { contains: query, mode: "insensitive" } } } },
         { phones: { some: { telephone: { contains: query, mode: "insensitive" } } } },
       ];
@@ -43,7 +42,7 @@ export async function GET(request: Request) {
     const contacts = await prisma.contact.findMany({
       where: whereClause,
       include: includeRelations,
-      orderBy: { createdAt: "desc" },
+      orderBy: { lastName: "asc" },
     });
 
     return NextResponse.json(contacts);
@@ -55,6 +54,9 @@ export async function GET(request: Request) {
     );
   }
 }
+
+
+
 export async function POST(request: Request) {
     try {
         const body = await request.json();
@@ -66,12 +68,17 @@ export async function POST(request: Request) {
 
         const emails = cleanValues(body.emails);
         const phones = cleanValues(body.phones);
+
         const contact = await prisma.contact.create({
             data: {
                 firstName,
                 lastName: typeof body.lastName === "string" ? body.lastName.trim() || null : null,
                 jobTitle: typeof body.jobTitle === "string" ? body.jobTitle.trim() || null : null,
-                company_id: typeof body.companyId === "string" && body.companyId ? body.companyId : null,
+                
+                companyName: typeof body.companyName === "string" ? body.companyName.trim() || null : null,
+                companyAddress: typeof body.companyAddress === "string" ? body.companyAddress.trim() || null : null,
+                companyWebsite: typeof body.companyWebsite === "string" ? body.companyWebsite.trim() || null : null,
+                
                 tag_id: typeof body.tagId === "string" && body.tagId ? body.tagId : null,
                 emails: { create: emails.map((email, index) => ({ email, isPrimary: index === 0 })) },
                 phones: { create: phones.map((telephone, index) => ({ telephone, isPrimary: index === 0 })) },

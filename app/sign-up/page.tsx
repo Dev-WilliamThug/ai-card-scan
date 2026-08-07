@@ -9,6 +9,7 @@ export default function SignUpPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("user");
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState({
     firstName: "",
@@ -65,17 +66,28 @@ export default function SignUpPage() {
     return isValid;
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+/*   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const fullName = `${name.firstName} ${name.lastName}`;
 
     try {
       setLoading(true);
-      await authClient.signUp.email({
-        name: fullName,
-        email,
-        password,
+
+      const res = await fetch("/api/sign-up", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          name: fullName,
+          role, // Transmission du rôle ("user" ou "admin")
+        }),
       });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Erreur d'inscription");
+      }
 
       router.push("/sign-in");
     } catch (error) {
@@ -84,11 +96,11 @@ export default function SignUpPage() {
       setLoading(false);
     }
   }
-
+ */
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 transition-colors duration-200">
       <form
-        onSubmit={handleSubmit}
+/*         onSubmit={handleSubmit} */
         className="flex flex-col gap-4 w-11/12 sm:w-full sm:max-w-md mx-auto p-6 sm:p-8 shadow-xl rounded-2xl bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800 transition-colors duration-200"
       >
         <h1 className="text-2xl font-bold text-center text-slate-900 dark:text-white">
@@ -185,6 +197,25 @@ export default function SignUpPage() {
               {errors.password}
             </p>
           )}
+        </fieldset>
+
+        {/* Nouveauté : Champ de sélection de rôle (Temporaire) */}
+        <fieldset className="fieldset flex flex-col gap-1">
+          <label
+            className="label text-xs font-semibold text-slate-600 dark:text-slate-300"
+            htmlFor="role"
+          >
+            Rôle
+          </label>
+          <select
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="select w-full bg-slate-50 border-slate-200 text-slate-900 focus:select-primary dark:bg-slate-800 dark:border-slate-700 dark:text-white rounded-xl transition-all"
+          >
+            <option value="USER">Utilisateur (user)</option>
+            <option value="ADMIN">Administrateur (admin)</option>
+          </select>
         </fieldset>
 
         <button
