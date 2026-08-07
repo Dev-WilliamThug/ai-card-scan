@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { UserRound, Scan, Settings, Upload } from "lucide-react"
+import { Contact, Scan, Settings, Upload, UserRound } from "lucide-react"
 import { authClient } from "@/lib/auth-client";
 
 function SideBar() {
@@ -10,7 +10,7 @@ function SideBar() {
     const { data: session } = authClient.useSession();
     const isAdmin = session?.user?.role === "admin";
     const navItems = [
-        { href: "/contacts", icon: UserRound, label: "Contacts" },
+        { href: "/contacts", icon: Contact, label: "Contacts" },
         { href: "/scan", icon: Upload, label: "Importer une carte", isHero: true },
     ];
     {
@@ -23,6 +23,7 @@ function SideBar() {
             }
         )
     }
+    const isParamActive = pathname ==="/settings";
     return (
 
         <aside className="hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 border-r border-slate-200 bg-slate-50/90 dark:border-slate-800 dark:bg-slate-950/80 backdrop-blur-md z-40 p-4 justify-between">
@@ -70,7 +71,10 @@ function SideBar() {
             <div className="border-t border-slate-200 dark:border-slate-800/60 pt-4 space-y-1">
                 <Link
                     href="/settings"
-                    className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-900 transition-colors"
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 active:scale-95 ${isParamActive
+                                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-semibold"
+                                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100"
+                                    }`}
                 >
                     <Settings className="h-4 w-4" />
                     <span>Paramètres</span>
