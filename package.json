@@ -9,6 +9,7 @@
     "db:generate": "prisma generate",
     "db:fix-supabase": "node scripts/fix-supabase-env.mjs",
     "db:copy-local-to-supabase": "node scripts/migrate-local-to-supabase.mjs",
+    "db:convert-local-domain": "node scripts/convert-local-domain-to-text.mjs",
     "start": "next start",
     "lint": "eslint"
   },

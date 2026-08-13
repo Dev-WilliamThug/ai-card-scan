@@ -3,7 +3,7 @@
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import type { Contact, Email, Phone, Tag } from "@prisma/client";
-import { DOMAINS_OF_ACTIVITY, type DomainOfActivityValue } from "@/lib/domainsOfActivity";
+import { DOMAINS_OF_ACTIVITY } from "@/lib/domainsOfActivity";
 
 export { DOMAINS_OF_ACTIVITY };
 
@@ -20,7 +20,7 @@ export interface ScannedData {
     companyName?: string;
     companyAddress?: string;
     companyWebsite?: string;
-    domainOfActivity?: DomainOfActivityValue;
+    domainOfActivity?: string;
     emails: string[];
     phones: string[];
 }

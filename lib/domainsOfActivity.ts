@@ -1,4 +1,4 @@
-export const DEFAULT_DOMAIN = "AUTRE" as const;
+export const DEFAULT_DOMAIN = "AUTRE";
 
 export const DOMAINS_OF_ACTIVITY = [
   { value: "INFORMATIQUE_DIGITAL", label: "Informatique & Digital" },
@@ -15,15 +15,13 @@ export const DOMAINS_OF_ACTIVITY = [
   { value: DEFAULT_DOMAIN, label: "Autre" },
 ] as const;
 
-export type DomainOfActivityValue = (typeof DOMAINS_OF_ACTIVITY)[number]["value"];
-
 const VALID_DOMAINS = new Set<string>(DOMAINS_OF_ACTIVITY.map((domain) => domain.value));
 
-export function isValidDomain(domain: string): domain is DomainOfActivityValue {
+export function isValidDomain(domain: string): boolean {
   return VALID_DOMAINS.has(domain);
 }
 
-export function resolveDomain(raw: unknown): DomainOfActivityValue {
+export function resolveDomain(raw: unknown): string {
   if (typeof raw === "string" && isValidDomain(raw.trim())) {
     return raw.trim();
   }
