@@ -17,7 +17,8 @@ export const auth = betterAuth({
     trustedOrigins: [
         "http://localhost:3001",
         "http://192.168.137.1:3001",
-        "aicardscan://",             // Votre schéma d'application standalone (APK / IPA)
+        "aicardscan://",             
+        "https://*.vercel.app",
         "exp://192.168.137.1:8081",
     ],
 

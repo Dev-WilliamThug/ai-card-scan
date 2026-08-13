@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { DomainOfActivity } from "@prisma/client";
-import { isValidDomain } from "@/lib/domainsOfActivity";
+import { isValidDomain, resolveDomain } from "@/lib/domainsOfActivity";
 
 const includeRelations = {
   tag: true,
@@ -71,7 +70,7 @@ export async function POST(request: Request) {
     const phones = cleanValues(body.phones);
 
     const rawDomain = typeof body.domainOfActivity === "string" ? body.domainOfActivity.trim() : "";
-    const domainOfActivity: DomainOfActivity = isValidDomain(rawDomain) ? rawDomain : DomainOfActivity.AUTRE;
+    const domainOfActivity = resolveDomain(rawDomain);
 
     const contact = await prisma.contact.create({
       data: {

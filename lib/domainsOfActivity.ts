@@ -1,4 +1,4 @@
-import { DomainOfActivity } from "@prisma/client";
+export const DEFAULT_DOMAIN = "AUTRE" as const;
 
 export const DOMAINS_OF_ACTIVITY = [
   { value: "INFORMATIQUE_DIGITAL", label: "Informatique & Digital" },
@@ -12,18 +12,20 @@ export const DOMAINS_OF_ACTIVITY = [
   { value: "EDUCATION_FORMATION", label: "Éducation & Formation" },
   { value: "HOTELLERIE_RESTAURATION_TOURISME", label: "Hôtellerie & Tourisme" },
   { value: "AGROALIMENTAIRE_AGRICULTURE", label: "Agroalimentaire & Agriculture" },
-  { value: "AUTRE", label: "Autre" },
+  { value: DEFAULT_DOMAIN, label: "Autre" },
 ] as const;
 
 export type DomainOfActivityValue = (typeof DOMAINS_OF_ACTIVITY)[number]["value"];
 
-export function isValidDomain(domain: string): domain is DomainOfActivity {
-  return Object.values(DomainOfActivity).includes(domain as DomainOfActivity);
+const VALID_DOMAINS = new Set<string>(DOMAINS_OF_ACTIVITY.map((domain) => domain.value));
+
+export function isValidDomain(domain: string): domain is DomainOfActivityValue {
+  return VALID_DOMAINS.has(domain);
 }
 
-export function resolveDomain(raw: unknown): DomainOfActivity {
+export function resolveDomain(raw: unknown): DomainOfActivityValue {
   if (typeof raw === "string" && isValidDomain(raw.trim())) {
-    return raw.trim() as DomainOfActivity;
+    return raw.trim();
   }
-  return DomainOfActivity.AUTRE;
+  return DEFAULT_DOMAIN;
 }
