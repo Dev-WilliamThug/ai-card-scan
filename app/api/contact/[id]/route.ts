@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DomainOfActivity } from "@prisma/client";
+import { isValidDomain } from "@/lib/domainsOfActivity";
 
 const includeRelations = {
     tag: true,
@@ -23,6 +25,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         const emails = cleanValues(body.emails);
         const phones = cleanValues(body.phones);
 
+        const rawDomain = typeof body.domainOfActivity === "string" ? body.domainOfActivity.trim() : "";
+        const domainOfActivity: DomainOfActivity = isValidDomain(rawDomain) ? rawDomain : DomainOfActivity.AUTRE;
+
         const contact = await prisma.contact.update({
             where: { contact_id: id },
             data: {
@@ -32,6 +37,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
                 companyName: typeof body.companyName === "string" ? body.companyName.trim() || null : null,
                 companyAddress: typeof body.companyAddress === "string" ? body.companyAddress.trim() || null : null,
                 companyWebsite: typeof body.companyWebsite === "string" ? body.companyWebsite.trim() || null : null,
+                domainOfActivity,
                 tag_id: typeof body.tagId === "string" && body.tagId ? body.tagId : null,
                 emails: { deleteMany: {}, create: emails.map((email, index) => ({ email, isPrimary: index === 0 })) },
                 phones: { deleteMany: {}, create: phones.map((telephone, index) => ({ telephone, isPrimary: index === 0 })) },

@@ -87,7 +87,6 @@ export function ContactDetailModal({
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showCardImageModal, setShowCardImageModal] = useState(false);
 
-  
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -109,8 +108,23 @@ export function ContactDetailModal({
   const companyAddress = (typeof contact.company === "object" ? contact.company?.address : null) || contact.address;
   const companyWebsite = (typeof contact.company === "object" ? contact.company?.website : null) || contact.website;
 
-  const primaryEmail = contact.emails?.[0]?.email || contact.email || "";
-  const primaryPhone = contact.phones?.[0]?.telephone || contact.phone || "";
+  // Récupération complète de tous les numéros de téléphone (tableau ou champ simple)
+  const allPhones: string[] = contact.phones?.length
+    ? contact.phones.map((p) => p.telephone).filter(Boolean)
+    : contact.phone
+      ? [contact.phone]
+      : [];
+
+  // Récupération complète de toutes les adresses email (tableau ou champ simple)
+  const allEmails: string[] = contact.emails?.length
+    ? contact.emails.map((e) => e.email).filter(Boolean)
+    : contact.email
+      ? [contact.email]
+      : [];
+
+  // Numéros et emails principaux pour les boutons d'action rapide
+  const primaryPhone = allPhones[0] || "";
+  const primaryEmail = allEmails[0] || "";
 
   const normalizedTags: Tag[] = contact.tags?.length 
     ? contact.tags 
@@ -134,7 +148,7 @@ export function ContactDetailModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      {/* Fenêtre de la Pop-up (Structure Flex verticale rigide pour éviter le débordement) */}
+      {/* Fenêtre de la Pop-up */}
       <div className="relative flex flex-col w-full max-w-lg max-h-[90vh] rounded-2xl sm:rounded-3xl bg-white shadow-2xl border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800 text-slate-800 dark:text-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
         
         {/* 1. Header Fixe */}
@@ -218,7 +232,7 @@ export function ContactDetailModal({
             )}
           </div>
 
-          {/* Actions Rapides (Adaptées pour petits écrans) */}
+          {/* Actions Rapides (Utilisent le 1er numéro / 1er email) */}
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {primaryPhone ? (
               <a
@@ -303,50 +317,70 @@ export function ContactDetailModal({
             </div>
           )}
 
-          {/* Coordonnées Détaillées (Correctement tronquées avec min-w-0) */}
+          {/* Coordonnées Détaillées (Affiche TOUS les numéros et emails) */}
           <div className="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 dark:border-slate-800/60 dark:bg-slate-800/30">
             <h3 className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">
               Coordonnées
             </h3>
 
             <div className="divide-y divide-slate-200/60 dark:divide-slate-800">
-              {primaryPhone && (
-                <div className="flex items-center justify-between gap-2 py-2.5 first:pt-0 last:pb-0 min-w-0">
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <Phone className="h-4 w-4 text-slate-400 shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[10px] text-slate-400">Téléphone</p>
-                      <p className="text-xs sm:text-sm font-medium truncate block">{primaryPhone}</p>
+              {/* Liste de TOUS les numéros de téléphone */}
+              {allPhones.map((phone, index) => {
+                const fieldKey = `phone-${index}`;
+                return (
+                  <div key={fieldKey} className="flex items-center justify-between gap-2 py-2.5 first:pt-0 last:pb-0 min-w-0">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <Phone className="h-4 w-4 text-slate-400 shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] text-slate-400">
+                          Téléphone {allPhones.length > 1 ? `${index + 1}` : ""}
+                        </p>
+                        <p className="text-xs sm:text-sm font-medium truncate block">{phone}</p>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => handleCopy(phone, fieldKey)}
+                      className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shrink-0"
+                      title="Copier"
+                    >
+                      {copiedField === fieldKey ? (
+                        <Check className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleCopy(primaryPhone, "phone")}
-                    className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shrink-0"
-                    title="Copier"
-                  >
-                    {copiedField === "phone" ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
-                  </button>
-                </div>
-              )}
+                );
+              })}
 
-              {primaryEmail && (
-                <div className="flex items-center justify-between gap-2 py-2.5 first:pt-0 last:pb-0 min-w-0">
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <Mail className="h-4 w-4 text-slate-400 shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[10px] text-slate-400">E-mail</p>
-                      <p className="text-xs sm:text-sm font-medium truncate block">{primaryEmail}</p>
+              {/* Liste de TOUTES les adresses email */}
+              {allEmails.map((email, index) => {
+                const fieldKey = `email-${index}`;
+                return (
+                  <div key={fieldKey} className="flex items-center justify-between gap-2 py-2.5 first:pt-0 last:pb-0 min-w-0">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <Mail className="h-4 w-4 text-slate-400 shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] text-slate-400">
+                          E-mail {allEmails.length > 1 ? `${index + 1}` : ""}
+                        </p>
+                        <p className="text-xs sm:text-sm font-medium truncate block">{email}</p>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => handleCopy(email, fieldKey)}
+                      className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shrink-0"
+                      title="Copier"
+                    >
+                      {copiedField === fieldKey ? (
+                        <Check className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleCopy(primaryEmail, "email")}
-                    className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shrink-0"
-                    title="Copier"
-                  >
-                    {copiedField === "email" ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
-                  </button>
-                </div>
-              )}
+                );
+              })}
 
               {companyName && (
                 <div className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0 min-w-0">

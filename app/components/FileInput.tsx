@@ -3,9 +3,10 @@
 import { useState  } from "react";
 import { Loader2, Sparkles, CheckCircle2, AlertCircle, Wand2, ArrowRight } from "lucide-react";
 import { processAndCompressImage } from "@/lib/vision/compressCard";
+import type { ScannedData } from "@/app/components/FormContact";
 
 interface FileInputProps {
-  onScanComplete?: (data: any) => void;
+  onScanComplete?: (data: ScannedData) => void;
 }
 
 export function FileInput({ onScanComplete }: FileInputProps) {
@@ -71,7 +72,7 @@ export function FileInput({ onScanComplete }: FileInputProps) {
       if (!resData.success) {
         throw new Error("Données inexistantes.");
       }
-/*       console.log("Données extraites :", resData.data); */
+      
       if (onScanComplete) {
         onScanComplete(resData.data);
       }

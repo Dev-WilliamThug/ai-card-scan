@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { DOMAINS_OF_ACTIVITY, resolveDomain } from "@/lib/domainsOfActivity";
 
 export async function POST(request: Request) {
   try {
@@ -20,20 +21,30 @@ export async function POST(request: Request) {
     const dataUrl = `data:${mimeType};base64,${base64Data}`;
 
 
+    const domainList = DOMAINS_OF_ACTIVITY.map((d) => `${d.value} (${d.label})`).join(", ");
+
     const prompt = `Tu es un assistant OCR expert en cartes de visite.
-                    Extrais les coordonnées et renvoie UNIQUEMENT un objet JSON valide avec cette structure exacte 
-                    Pour les mails et le numéro de téléphone récupère tout ce que tu trouveras et classe les dans un tableau:
-                    {
-                      "firstName": "Prénom principal",
-                      "lastName": "Nom de famille",
-                      "jobTitle": "Poste",
-                      "companyName": "Nom de l'entreprise",
-                      "companyAddress": "Adresse",
-                      "companyWebsite": "Site web",
-                      "emails": ["email@exemple.com","email2@exemple.com"],
-                      "phones": ["+33123456789","+237609647289"]
-                    }
-                    Si un champ n'est pas trouvé ou bien tu n'arrives pas facilement à le lire, laisse une chaîne vide "" ou un tableau vide [].`;
+Extrais les coordonnées et renvoie UNIQUEMENT un objet JSON valide :
+
+{
+  "firstName": "Prénom",
+  "lastName": "Nom",
+  "jobTitle": "Poste",
+  "companyName": "Entreprise",
+  "companyAddress": "Adresse",
+  "companyWebsite": "Site web",
+  "domainOfActivity": "SANTE_MEDICAL",
+  "emails": ["email@exemple.com"],
+  "phones": ["+33123456789"]
+}
+
+Champs vides si introuvables : "" ou [].
+
+Pour domainOfActivity, déduis le secteur à partir du poste et de l'entreprise.
+Renvoie une clé exacte parmi : ${domainList}.
+Exemples : opticien → SANTE_MEDICAL, développeur → INFORMATIQUE_DIGITAL, avocat → CONSEIL_JURIDIQUE_RH.
+Utilise AUTRE uniquement si aucun secteur n'est identifiable.
+`;
 
 
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -73,7 +84,10 @@ export async function POST(request: Request) {
 
     const cleanJson = rawText;
 
-    const parsedData = JSON.parse(cleanJson); //Convertit la réponse de OpenRouter en Objet Javascript
+    const parsedData = JSON.parse(cleanJson);
+    const rawDomain = parsedData.domainOfActivity ?? parsedData.domaineOfActivity;
+    parsedData.domainOfActivity = resolveDomain(rawDomain);
+    delete parsedData.domaineOfActivity;
 
     return NextResponse.json({
       success: true,

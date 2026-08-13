@@ -109,13 +109,6 @@ export default function SignInPage() {
             "Se connecter"
           )}
         </button>
-
-        <a
-          href="/sign-up"
-          className="text-center text-sm font-medium text-primary hover:underline dark:text-primary/90 mt-1"
-        >
-          Pas de compte ? S'inscrire
-        </a>
       </form>
     </div>
   );

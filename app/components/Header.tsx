@@ -2,7 +2,7 @@
 
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 
 function Header() {
   const router = useRouter();
@@ -18,32 +18,29 @@ function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-30 h-16 border-b border-slate-200 bg-slate-50/90 dark:border-slate-800 dark:bg-slate-950/80 backdrop-blur-md transition-colors md:pl-72 flex items-center justify-between px-4 md:px-6">
-      
+
       <div className="flex items-center gap-2">
         <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
           AI Card Scan
         </span>
       </div>
 
-     
+
       <div className="flex items-center gap-3">
         <div className="dropdown dropdown-end">
-          
-          
+
+
           <div
             tabIndex={0}
             role="button"
             className="btn btn-ghost btn-circle avatar ring-2 ring-slate-200/80 dark:ring-slate-800 hover:ring-primary/40 transition-all duration-200"
           >
             <div className="w-9 rounded-full">
-              <img
-                alt="Avatar utilisateur"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
+              <User className="w-full h-8"/>
             </div>
           </div>
 
-          
+
           <ul
             tabIndex={-1}
             className="dropdown-content menu mt-3 w-56 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-800 dark:bg-slate-900 dark:shadow-slate-950/50 z-50 space-y-1"

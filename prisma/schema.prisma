@@ -11,6 +11,21 @@ datasource db {
   provider = "postgresql"
 }
 
+enum DomainOfActivity {
+  INFORMATIQUE_DIGITAL
+  FINANCE_BANQUE_ASSURANCE
+  CONSEIL_JURIDIQUE_RH
+  MARKETING_COMMUNICATION_MEDIAS
+  COMMERCE_DISTRIBUTION
+  IMMOBILIER_BTP
+  SANTE_MEDICAL
+  INDUSTRIE_ENERGIE_LOGISTIQUE
+  EDUCATION_FORMATION
+  HOTELLERIE_RESTAURATION_TOURISME
+  AGROALIMENTAIRE_AGRICULTURE
+  AUTRE
+}
+
 model User {
   id            String    @id @default(uuid())
   name          String
@@ -39,10 +54,14 @@ model Contact {
   companyName    String?
   companyAddress String?
   companyWebsite String?
+  domainOfActivity DomainOfActivity? @default(AUTRE)
+
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
   tag_id         String?
   tag            Tag?         @relation(fields: [tag_id], references: [tag_id])
+  
   emails         Email[]
   phones         Phone[]
   socialLinks    SocialLink[]

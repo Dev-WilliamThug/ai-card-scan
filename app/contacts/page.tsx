@@ -3,7 +3,7 @@
 import { BottomBar } from "@/app/components/BottomBar";
 import { Header } from "@/app/components/Header";
 import { ContactCard } from "@/app/components/ContactCard";
-import { FormContact, type ContactDetails } from "@/app/components/FormContact";
+import { FormContact, type ContactDetails, DOMAINS_OF_ACTIVITY } from "@/app/components/FormContact";
 import { FormTag } from "@/app/components/FormTag";
 import { ContactDetailModal, Contact } from "@/app/components/ContactViewModal";
 import { SideBar } from "@/app/components/SideBar";
@@ -20,6 +20,7 @@ export default function ContactsPage() {
 
   const [searchInput, setSearchInput] = useState("");
   const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
+  const [selectedDomain, setSelectedDomain] = useState<string>("");
 
 
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
@@ -64,6 +65,7 @@ export default function ContactsPage() {
       const queryParams = new URLSearchParams();
       if (searchInput) queryParams.set("query", searchInput);
       if (selectedTagId) queryParams.set("tagId", selectedTagId);
+      if (selectedDomain) queryParams.set("domain", selectedDomain);
 
       const response = await fetch(`/api/contact?${queryParams.toString()}`);
       if (!response.ok) throw new Error("Impossible de récupérer les contacts.");
@@ -76,7 +78,7 @@ export default function ContactsPage() {
       setIsSearching(false);
       setIsInitialLoading(false);
     }
-  }, [searchInput, selectedTagId]);
+  }, [searchInput, selectedTagId, selectedDomain]);
 
 
   useEffect(() => {
@@ -86,6 +88,7 @@ export default function ContactsPage() {
     const queryParams = new URLSearchParams();
     if (searchInput) queryParams.set("query", searchInput);
     if (selectedTagId) queryParams.set("tagId", selectedTagId);
+    if (selectedDomain) queryParams.set("domain", selectedDomain);
 
     fetch(`/api/contact?${queryParams.toString()}`, { signal: controller.signal })
       .then((res) => (res.ok ? res.json() : Promise.reject("Erreur")))
@@ -103,7 +106,7 @@ export default function ContactsPage() {
       });
 
     return () => controller.abort();
-  }, [searchInput, selectedTagId]);
+  }, [searchInput, selectedTagId, selectedDomain]);
 
   // --- Actions Modal Création / Édition ---
   const closeModal = () => modalRef.current?.close();
@@ -179,6 +182,24 @@ export default function ContactsPage() {
           </button>
         </div>
 
+        <div className="flex items-center gap-2">
+          <label htmlFor="domain-filter" className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0">
+            Domaine
+          </label>
+          <select
+            id="domain-filter"
+            className="select select-bordered select-sm rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 min-w-[220px] flex-1 sm:flex-none sm:max-w-xs"
+            value={selectedDomain}
+            onChange={(event) => setSelectedDomain(event.target.value)}
+          >
+            <option value="">Tous les domaines</option>
+            {DOMAINS_OF_ACTIVITY.map((domain) => (
+              <option key={domain.value} value={domain.value}>
+                {domain.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
 
@@ -256,7 +277,7 @@ export default function ContactsPage() {
                   Aucun contact trouvé
                 </p>
                 <p className="text-sm text-gray-400 mt-1 max-w-sm">
-                  {searchInput || selectedTagId
+                  {searchInput || selectedTagId || selectedDomain
                     ? "Essayez de modifier vos critères de recherche ou vos filtres."
                     : "Commencez par ajouter votre premier contact à l'aide du bouton ci-dessus."}
                 </p>

@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DomainOfActivity } from "@prisma/client";
+import { isValidDomain } from "@/lib/domainsOfActivity";
 
 const includeRelations = {
-    tag: true,
-    emails: { orderBy: { createdAt: "asc" } },
-    phones: { orderBy: { createdAt: "asc" } },
+  tag: true,
+  emails: { orderBy: { createdAt: "asc" } },
+  phones: { orderBy: { createdAt: "asc" } },
 } as const;
 
 function cleanValues(values: unknown): string[] {
-    return Array.isArray(values)
-        ? values.filter((value): value is string => typeof value === "string").map((value) => value.trim()).filter(Boolean)
-        : [];
+  return Array.isArray(values)
+    ? values.filter((value): value is string => typeof value === "string").map((value) => value.trim()).filter(Boolean)
+    : [];
 }
 
 export async function GET(request: Request) {
@@ -18,11 +20,10 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("query")?.trim() ?? "";
     const tagId = searchParams.get("tagId")?.trim() ?? "";
+    const domain = searchParams.get("domain")?.trim() ?? "";
 
-    
     const whereClause: any = {};
 
-    
     if (query) {
       whereClause.OR = [
         { firstName: { contains: query, mode: "insensitive" } },
@@ -33,12 +34,14 @@ export async function GET(request: Request) {
       ];
     }
 
-
     if (tagId) {
-      whereClause.tag_id = tagId; 
+      whereClause.tag_id = tagId;
     }
 
-   
+    if (domain && isValidDomain(domain)) {
+      whereClause.domainOfActivity = domain;
+    }
+
     const contacts = await prisma.contact.findMany({
       where: whereClause,
       include: includeRelations,
@@ -55,40 +58,40 @@ export async function GET(request: Request) {
   }
 }
 
-
-
 export async function POST(request: Request) {
-    try {
-        const body = await request.json();
-        const firstName = typeof body.firstName === "string" ? body.firstName.trim() : "";
+  try {
+    const body = await request.json();
+    const firstName = typeof body.firstName === "string" ? body.firstName.trim() : "";
 
-        if (!firstName) {
-            return NextResponse.json({ success: false, message: "Le prénom est obligatoire." }, { status: 400 });
-        }
-
-        const emails = cleanValues(body.emails);
-        const phones = cleanValues(body.phones);
-
-        const contact = await prisma.contact.create({
-            data: {
-                firstName,
-                lastName: typeof body.lastName === "string" ? body.lastName.trim() || null : null,
-                jobTitle: typeof body.jobTitle === "string" ? body.jobTitle.trim() || null : null,
-                
-                companyName: typeof body.companyName === "string" ? body.companyName.trim() || null : null,
-                companyAddress: typeof body.companyAddress === "string" ? body.companyAddress.trim() || null : null,
-                companyWebsite: typeof body.companyWebsite === "string" ? body.companyWebsite.trim() || null : null,
-                
-                tag_id: typeof body.tagId === "string" && body.tagId ? body.tagId : null,
-                emails: { create: emails.map((email, index) => ({ email, isPrimary: index === 0 })) },
-                phones: { create: phones.map((telephone, index) => ({ telephone, isPrimary: index === 0 })) },
-            },
-            include: includeRelations,
-        });
-
-        return NextResponse.json({ success: true, contact }, { status: 201 });
-    } catch (error) {
-        console.error("Erreur lors de la création du contact :", error);
-        return NextResponse.json({ success: false, message: "Impossible de créer ce contact." }, { status: 500 });
+    if (!firstName) {
+      return NextResponse.json({ success: false, message: "Le prénom est obligatoire." }, { status: 400 });
     }
+
+    const emails = cleanValues(body.emails);
+    const phones = cleanValues(body.phones);
+
+    const rawDomain = typeof body.domainOfActivity === "string" ? body.domainOfActivity.trim() : "";
+    const domainOfActivity: DomainOfActivity = isValidDomain(rawDomain) ? rawDomain : DomainOfActivity.AUTRE;
+
+    const contact = await prisma.contact.create({
+      data: {
+        firstName,
+        lastName: typeof body.lastName === "string" ? body.lastName.trim() || null : null,
+        jobTitle: typeof body.jobTitle === "string" ? body.jobTitle.trim() || null : null,
+        companyName: typeof body.companyName === "string" ? body.companyName.trim() || null : null,
+        companyAddress: typeof body.companyAddress === "string" ? body.companyAddress.trim() || null : null,
+        companyWebsite: typeof body.companyWebsite === "string" ? body.companyWebsite.trim() || null : null,
+        domainOfActivity,
+        tag_id: typeof body.tagId === "string" && body.tagId ? body.tagId : null,
+        emails: { create: emails.map((email, index) => ({ email, isPrimary: index === 0 })) },
+        phones: { create: phones.map((telephone, index) => ({ telephone, isPrimary: index === 0 })) },
+      },
+      include: includeRelations,
+    });
+
+    return NextResponse.json({ success: true, contact }, { status: 201 });
+  } catch (error) {
+    console.error("Erreur lors de la création du contact :", error);
+    return NextResponse.json({ success: false, message: "Impossible de créer ce contact." }, { status: 500 });
+  }
 }
