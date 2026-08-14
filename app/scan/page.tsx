@@ -1,6 +1,5 @@
 "use client"
 import { Header } from "@/app/components/Header";
-import { BottomBar } from "@/app/components/BottomBar";
 import { ButtonScan } from "@/app/components/ButtonScan";
 import { FileInput } from "@/app/components/FileInput";
 import { SideBar } from "@/app/components/SideBar";
@@ -41,7 +40,6 @@ export default function scan_page() {
 
                 }
             </main >
-            <BottomBar />
         </>
 
     )
