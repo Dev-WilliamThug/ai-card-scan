@@ -147,9 +147,9 @@ export default function SettingsPage() {
             <Header />
             <SideBar />
 
-            {/* Zone de contenu principal avec marge adaptative pour la sidebar */}
+           
             <main className="md:ml-64 pt-16 min-h-screen p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-                {/* En-tête de la page */}
+              
                 <div className="mb-8">
                     <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                         Paramètres
@@ -159,9 +159,9 @@ export default function SettingsPage() {
                     </p>
                 </div>
 
-                {/* Layout principal : Tabs à gauche (desktop) / Contenu à droite */}
+              
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    {/* Menu des Onglets */}
+                   
                     <div className="lg:col-span-3">
                         <nav className="flex lg:flex-col gap-1 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
                             {navItems.map((item) => {
@@ -189,9 +189,9 @@ export default function SettingsPage() {
                         </nav>
                     </div>
 
-                    {/* Formulaire & Panneaux de réglages */}
+                   
                     <div className="lg:col-span-9">
-                        {/* --- ONGLET 1: PROFIL & COMPTE --- */}
+                        
                         {activeTab === "profile" && (
                             <form onSubmit={handleUpdateProfile} className="space-y-6">
                                 <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6">
@@ -297,7 +297,7 @@ export default function SettingsPage() {
                             </form>
                         )}
 
-                        {/* --- ONGLET 3: APPARENCE & THÈME --- */}
+                  
                         {activeTab === "appearance" && (
                             <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6">
                                 <div>
@@ -349,7 +349,7 @@ export default function SettingsPage() {
 
                         )}
 
-                        {/* --- ONGLET 4: SÉCURITÉ --- */}
+                        
                         {activeTab === "security" && (
                             <form onSubmit={handleChangePassword} className="space-y-6">
                                 <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6">

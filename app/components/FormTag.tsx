@@ -65,7 +65,7 @@ export function FormTag({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
 
-                {/* Header */}
+                
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
                     <div className="flex items-center gap-2">
                         <div className="p-2 bg-primary/10 rounded-xl text-primary">
@@ -84,14 +84,14 @@ export function FormTag({
                     </button>
                 </div>
 
-                {/* Message d'erreur éventuel */}
+              
                 {errorMessage && (
                     <div className="mt-3 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
                         {errorMessage}
                     </div>
                 )}
 
-                {/* Formulaire */}
+               
                 <form onSubmit={handleSubmit} className="mt-4 space-y-5">
                     <div>
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">
@@ -109,7 +109,7 @@ export function FormTag({
                         />
                     </div>
 
-                    {/* Sélection de la couleur */}
+                    
                     <div>
                         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">
                             Couleur du tag
@@ -136,7 +136,7 @@ export function FormTag({
                         </div>
                     </div>
 
-                    {/* Actions */}
+                   
                     <div className="flex items-center justify-end gap-2 pt-2">
                         <button
                             type="button"

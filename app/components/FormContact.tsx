@@ -125,7 +125,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
             onSubmit={handleSubmit} 
             className="flex flex-col w-full max-h-[85vh] bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 overflow-hidden"
         >
-            {/* 1. En-tête Fixe */}
+          
             <div className="shrink-0 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-4">
                 <div className="flex items-center gap-2.5">
                     <div className="p-2 rounded-xl bg-primary/10 text-primary">
@@ -146,7 +146,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                 </button>
             </div>
 
-            {/* 2. Zone défilante (Scrollable) */}
+            
             <div className="flex-1 overflow-y-auto p-5 space-y-5">
                 
                 {message && (
@@ -155,7 +155,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                     </div>
                 )}
 
-                {/* Nom & Prénom */}
+               
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <fieldset className="space-y-1.5">
                         <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="firstName">
@@ -187,7 +187,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                     </fieldset>
                 </div>
 
-                {/* E-mails */}
+                
                 <fieldset className="space-y-2 p-3.5 rounded-2xl bg-slate-50/60 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/80">
                     <div className="flex items-center justify-between">
                         <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -224,7 +224,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                     ))}
                 </fieldset>
 
-                {/* Téléphones */}
+                
                 <fieldset className="space-y-2 p-3.5 rounded-2xl bg-slate-50/60 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/80">
                     <div className="flex items-center justify-between">
                         <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -261,7 +261,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                     ))}
                 </fieldset>
 
-                {/* Poste & Entreprise */}
+                
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <fieldset className="space-y-1.5">
                         <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="jobTitle">
@@ -292,7 +292,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                     </fieldset>
                 </div>
 
-                {/* Adresse & Site web */}
+               
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <fieldset className="space-y-1.5">
                         <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyAddress">
@@ -323,7 +323,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                     </fieldset>
                 </div>
 
-                {/* Domaine & Tag */}
+               
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <fieldset className="space-y-1.5">
                         <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="domainOfActivity">
@@ -365,7 +365,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                 </div>
             </div>
 
-            {/* 3. Pied de page Fixe */}
+   
             <div className="shrink-0 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/80 px-5 py-4">
                 <button
                     className="btn btn-ghost hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all active:scale-95"

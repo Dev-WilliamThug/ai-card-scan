@@ -40,10 +40,9 @@ export interface SocialLinkItem {
   url: string;
 }
 
-// Interface alignée avec le nouveau schéma Prisma
+
 export interface Contact {
   contact_id?: string;
-  id?: string; // Fallback pour compatibilité
   firstName: string;
   lastName?: string;
   jobTitle?: string;
@@ -55,13 +54,12 @@ export interface Contact {
 
   tag_id?: string;
   tag?: Tag;
-  tags?: Tag[]; // Fallback si reçu sous forme de tableau
-
+  tags?: Tag[]; 
   emails?: EmailItem[];
-  email?: string; // Fallback
+  email?: string; 
 
   phones?: PhoneItem[];
-  phone?: string; // Fallback
+  phone?: string; 
 
   socialLinks?: SocialLinkItem[];
 
@@ -100,7 +98,7 @@ export function ContactDetailModal({
   if (!isOpen || !contact) return null;
 
 
-  const contactId = contact.contact_id || contact.id || "";
+  const contactId = contact.contact_id || "";
   const jobTitle = contact.jobTitle || "";
   
 
@@ -294,7 +292,7 @@ export function ContactDetailModal({
 
             <div className="divide-y divide-slate-200/60 dark:divide-slate-800">
              
-              {/* Téléphones */}
+            
               {allPhones.map((phone, index) => {
                 const fieldKey = `phone-${index}`;
                 return (
@@ -323,7 +321,7 @@ export function ContactDetailModal({
                 );
               })}
 
-              {/* Emails */}
+              
               {allEmails.map((email, index) => {
                 const fieldKey = `email-${index}`;
                 return (
@@ -362,7 +360,7 @@ export function ContactDetailModal({
                 </div>
               )}
 
-              {/* Domaine d'activité */}
+              
               {domainOfActivity && (
                 <div className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0 min-w-0">
                   <Briefcase className="h-4 w-4 text-slate-400 shrink-0" />

@@ -62,7 +62,7 @@ export function FileInput({ onScanComplete }: FileInputProps) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.log("Code HTTP :", response.status); // Ex: 400
+        console.log("Code HTTP :", response.status); 
         console.log("Message d'erreur :", errorData.error);
         throw new Error("Erreur lors du traitement par l'IA. Réessayer dans quelques instants")
       }

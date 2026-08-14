@@ -30,8 +30,8 @@ export function ContactCard({
   };
 
   return (
-    <div className="block w-full md:w-auto">
-      <article className="group relative flex flex-row md:flex-col items-center gap-4 p-4 md:p-6 bg-white dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md dark:hover:shadow-slate-950/50 rounded-2xl w-full max-w-full md:max-w-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-700">
+    <div className="w-full h-full">
+      <article className="group relative flex flex-row md:flex-col items-center justify-between gap-4 p-4 md:p-6 bg-white dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md dark:hover:shadow-slate-950/50 rounded-2xl w-full h-full transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-700">
 
         <div className="flex items-center justify-center h-14 w-14 md:h-20 md:w-20 rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary font-bold text-lg md:text-xl shrink-0 ring-1 ring-primary/20 group-hover:scale-105 transition-transform duration-300">
           {initials}

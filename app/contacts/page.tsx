@@ -1,6 +1,5 @@
 "use client";
 
-import { BottomBar } from "@/app/components/BottomBar";
 import { Header } from "@/app/components/Header";
 import { ContactCard } from "@/app/components/ContactCard";
 import { FormContact, type ContactDetails, DOMAINS_OF_ACTIVITY } from "@/app/components/FormContact";
@@ -34,15 +33,11 @@ export default function ContactsPage() {
   const [deletingContactId, setDeletingContactId] = useState<string | null>(null);
   const [formKey, setFormKey] = useState(0);
 
-  // --- Handlers Modal Aperçu Rapide ---
   const handleCardClick = (contact: ContactDetails) => {
     setSelectedContact(contact as unknown as Contact);
     setIsDetailModalOpen(true);
   };
 
-  const handleCreateTag = () => {
-    setIsTagModalOpen(true);
-  }
   const fetchTags = useCallback(async () => {
     try {
       const response = await fetch("/api/tag");
@@ -108,7 +103,7 @@ export default function ContactsPage() {
     return () => controller.abort();
   }, [searchInput, selectedTagId, selectedDomain]);
 
-  // --- Actions Modal Création / Édition ---
+
   const closeModal = () => modalRef.current?.close();
 
   const openCreateModal = () => {
@@ -258,7 +253,7 @@ export default function ContactsPage() {
           <>
 
             {contacts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 w-full">
                 {contacts.map((contact) => (
                   <ContactCard
                     key={contact.contact_id}
@@ -271,7 +266,6 @@ export default function ContactsPage() {
                 ))}
               </div>
             ) : (
-              /* --- État vide (Aucun contact trouvé) --- */
               <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-white dark:bg-base-150 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
                 <p className="text-base font-semibold text-gray-700 dark:text-gray-300">
                   Aucun contact trouvé
@@ -286,7 +280,7 @@ export default function ContactsPage() {
           </>
         )}
 
-        {/* --- Modale d'Aperçu Rapide (Détails) --- */}
+
         <ContactDetailModal
           contact={selectedContact}
           isOpen={isDetailModalOpen}
@@ -313,8 +307,6 @@ export default function ContactsPage() {
           </form>
         </dialog>
       </main>
-
-      <BottomBar />
     </>
   );
 }
