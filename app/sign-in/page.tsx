@@ -8,7 +8,6 @@ import { Loader2 } from "lucide-react";
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -16,7 +15,6 @@ export default function SignInPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    setSuccess("");
     setLoading(true);
 
     try {
@@ -30,7 +28,6 @@ export default function SignInPage() {
         return;
       }
 
-      setSuccess("Connexion réussie.");
       router.push("/contacts");
     } catch (error) {
       console.error("Erreur lors de la connexion :", error);
@@ -86,12 +83,6 @@ export default function SignInPage() {
         {error && (
           <div className="alert alert-error text-xs rounded-xl border dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-300">
             <span>{error}</span>
-          </div>
-        )}
-
-        {success && (
-          <div className="alert alert-success text-xs rounded-xl border dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300">
-            <span>{success}</span>
           </div>
         )}
 

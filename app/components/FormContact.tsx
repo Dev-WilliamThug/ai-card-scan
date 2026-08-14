@@ -1,8 +1,21 @@
 "use client";
 
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { 
+  Loader2, 
+  Plus, 
+  Trash2, 
+  X, 
+  User, 
+  Mail, 
+  Phone, 
+  Briefcase, 
+  Building2, 
+  MapPin, 
+  Globe, 
+  Tag as TagIcon 
+} from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
-import type { Contact, Email, Phone, Tag } from "@prisma/client";
+import type { Contact, Email, Phone as PhoneType, Tag } from "@prisma/client";
 import { DOMAINS_OF_ACTIVITY } from "@/lib/domainsOfActivity";
 
 export { DOMAINS_OF_ACTIVITY };
@@ -10,7 +23,7 @@ export { DOMAINS_OF_ACTIVITY };
 export type ContactDetails = Contact & {
     tag: Tag | null;
     emails: Email[];
-    phones: Phone[];
+    phones: PhoneType[];
 };
 
 export interface ScannedData {
@@ -108,213 +121,254 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-6 rounded-2xl shadow-xl transition-colors">
-
-            <h1 className="text-xl sm:text-2xl font-bold text-center text-slate-900 dark:text-slate-100 tracking-tight">
-                {contact ? "Modifier le contact" : scannedData ? "Valider le contact scanné" : "Nouveau contact"}
-            </h1>
-
-            {message && (
-                <div className="alert alert-error text-sm rounded-xl py-2 px-4 bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900">
-                    {message}
-                </div>
-            )}
-
-            <fieldset className="fieldset space-y-1.5">
-                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="lastName">
-                    Nom
-                </label>
-                <input
-                    type="text"
-                    id="lastName"
-                    className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary"
-                    value={lastName}
-                    onChange={(event) => setLastName(event.target.value)}
-                />
-            </fieldset>
-
-            <fieldset className="fieldset space-y-1.5">
-                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="firstName">
-                    Prénom *
-                </label>
-                <input
-                    required
-                    type="text"
-                    id="firstName"
-                    className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary"
-                    value={firstName}
-                    onChange={(event) => setFirstName(event.target.value)}
-                />
-            </fieldset>
-
-            <fieldset className="fieldset space-y-1.5">
-                <div className="flex items-center justify-between">
-                    <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        E-mail
-                    </label>
-                    <button
-                        type="button"
-                        className="btn btn-ghost btn-xs text-primary hover:bg-primary/10 rounded-lg gap-1"
-                        onClick={() => setEmails((values) => [...values, ""])}
-                        aria-label="Ajouter une adresse e-mail"
-                    >
-                        <Plus size={14} /> Ajouter
-                    </button>
-                </div>
-                {emails.map((email, index) => (
-                    <div key={`email-${index}`} className="flex gap-2 mb-2 items-center">
-                        <input
-                            type="email"
-                            className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl"
-                            value={email}
-                            onChange={(event) => setEmails((values) => values.map((value, i) => i === index ? event.target.value : value))}
-                        />
-                        {emails.length > 1 && (
-                            <button
-                                type="button"
-                                className="btn btn-ghost btn-square text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-xl"
-                                onClick={() => setEmails((values) => removeAt(values, index))}
-                                aria-label="Supprimer cet e-mail"
-                            >
-                                <Trash2 size={16} />
-                            </button>
-                        )}
+        <form 
+            onSubmit={handleSubmit} 
+            className="flex flex-col w-full max-h-[85vh] bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 overflow-hidden"
+        >
+            {/* 1. En-tête Fixe */}
+            <div className="shrink-0 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-4">
+                <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                        <User size={18} />
                     </div>
-                ))}
-            </fieldset>
-
-            <fieldset className="fieldset space-y-1.5">
-                <div className="flex items-center justify-between">
-                    <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        Numéro de téléphone
-                    </label>
-                    <button
-                        type="button"
-                        className="btn btn-ghost btn-xs text-primary hover:bg-primary/10 rounded-lg gap-1"
-                        onClick={() => setPhones((values) => [...values, ""])}
-                        aria-label="Ajouter un numéro"
-                    >
-                        <Plus size={14} /> Ajouter
-                    </button>
+                    <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+                        {contact ? "Modifier le contact" : scannedData ? "Valider le contact scanné" : "Nouveau contact"}
+                    </h1>
                 </div>
-                {phones.map((phone, index) => (
-                    <div key={`phone-${index}`} className="flex gap-2 mb-2 items-center">
-                        <input
-                            type="tel"
-                            className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl"
-                            value={phone}
-                            onChange={(event) => setPhones((values) => values.map((value, i) => i === index ? event.target.value : value))}
-                        />
-                        {phones.length > 1 && (
-                            <button
-                                type="button"
-                                className="btn btn-ghost btn-square text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-xl"
-                                onClick={() => setPhones((values) => removeAt(values, index))}
-                                aria-label="Supprimer ce numéro"
-                            >
-                                <Trash2 size={16} />
-                            </button>
-                        )}
-                    </div>
-                ))}
-            </fieldset>
 
-            <fieldset className="fieldset space-y-1.5">
-                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="jobTitle">
-                    Poste / Fonction
-                </label>
-                <input
-                    type="text"
-                    id="jobTitle"
-                    className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl"
-                    value={jobTitle}
-                    onChange={(event) => setJobTitle(event.target.value)}
-                />
-            </fieldset>
-
-            <fieldset className="fieldset space-y-1.5">
-                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyName">
-                    Nom de l'entreprise
-                </label>
-                <input
-                    type="text"
-                    id="companyName"
-                    className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl"
-                    placeholder="Ex: Mayem Solutions"
-                    value={companyName}
-                    onChange={(event) => setCompanyName(event.target.value)}
-                />
-            </fieldset>
-
-            <fieldset className="fieldset space-y-1.5">
-                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyAddress">
-                    Adresse de l'entreprise
-                </label>
-                <input
-                    type="text"
-                    id="companyAddress"
-                    className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl"
-                    placeholder="Ex: Ancienne Ambassade d'italie, Yaoundé"
-                    value={companyAddress}
-                    onChange={(event) => setCompanyAddress(event.target.value)}
-                />
-            </fieldset>
-
-            <fieldset className="fieldset space-y-1.5">
-                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyWebsite">
-                    Site web de l'entreprise
-                </label>
-                <input
-                    type="text"
-                    id="companyWebsite"
-                    className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl"
-                    placeholder="Ex: https://entreprise.com"
-                    value={companyWebsite}
-                    onChange={(event) => setCompanyWebsite(event.target.value)}
-                />
-            </fieldset>
-
-            <fieldset className="fieldset space-y-1.5">
-                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="domainOfActivity">
-                    Domaine d'activité
-                </label>
-                <select
-                    id="domainOfActivity"
-                    className="select select-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl"
-                    value={domainOfActivity}
-                    onChange={(event) => setDomainOfActivity(event.target.value)}
-                >
-                    <option value="" key="undefined">Aucun domaine d'activité</option>
-                    {DOMAINS_OF_ACTIVITY.map((domain) => (
-                        <option key={domain.value} value={domain.value}>
-                            {domain.label}
-                        </option>
-                    ))}
-                </select>
-            </fieldset>
-
-            <fieldset className="fieldset space-y-1.5">
-                <label className="label text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="tag">
-                    Tag
-                </label>
-                <select
-                    id="tag"
-                    className="select select-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl"
-                    value={tagId}
-                    onChange={(event) => setTagId(event.target.value)}
-                >
-                    <option value="" key="undefined">Aucun tag</option>
-                    {tags.map((tag) => (
-                        <option key={tag.tag_id} value={tag.tag_id}>
-                            {tag.name}
-                        </option>
-                    ))}
-                </select>
-            </fieldset>
-
-            <div className="flex justify-between gap-3 pt-2">
                 <button
-                    className="btn btn-soft btn-error w-1/2 rounded-xl border border-red-200 dark:border-red-900/50"
+                    type="button"
+                    onClick={onClose}
+                    className="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors active:scale-95"
+                    title="Fermer"
+                >
+                    <X size={20} />
+                </button>
+            </div>
+
+            {/* 2. Zone défilante (Scrollable) */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-5">
+                
+                {message && (
+                    <div className="alert alert-error text-sm rounded-xl py-2.5 px-4 bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900">
+                        {message}
+                    </div>
+                )}
+
+                {/* Nom & Prénom */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <fieldset className="space-y-1.5">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="firstName">
+                            <User size={13} className="text-primary" /> Prénom *
+                        </label>
+                        <input
+                            required
+                            type="text"
+                            id="firstName"
+                            className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="Ex: William"
+                            value={firstName}
+                            onChange={(event) => setFirstName(event.target.value)}
+                        />
+                    </fieldset>
+
+                    <fieldset className="space-y-1.5">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="lastName">
+                            Nom
+                        </label>
+                        <input
+                            type="text"
+                            id="lastName"
+                            className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="Ex: Duval"
+                            value={lastName}
+                            onChange={(event) => setLastName(event.target.value)}
+                        />
+                    </fieldset>
+                </div>
+
+                {/* E-mails */}
+                <fieldset className="space-y-2 p-3.5 rounded-2xl bg-slate-50/60 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/80">
+                    <div className="flex items-center justify-between">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            <Mail size={13} className="text-primary" /> E-mail
+                        </label>
+                        <button
+                            type="button"
+                            className="btn btn-ghost btn-xs text-primary hover:bg-primary/10 rounded-lg gap-1 font-semibold active:scale-95 transition-all"
+                            onClick={() => setEmails((values) => [...values, ""])}
+                        >
+                            <Plus size={14} /> Ajouter
+                        </button>
+                    </div>
+                    {emails.map((email, index) => (
+                        <div key={`email-${index}`} className="flex gap-2 items-center">
+                            <input
+                                type="email"
+                                className="input input-bordered w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                placeholder="Ex: contact@exemple.com"
+                                value={email}
+                                onChange={(event) => setEmails((values) => values.map((value, i) => i === index ? event.target.value : value))}
+                            />
+                            {emails.length > 1 && (
+                                <button
+                                    type="button"
+                                    className="btn btn-ghost btn-square text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-xl shrink-0 transition-colors"
+                                    onClick={() => setEmails((values) => removeAt(values, index))}
+                                    title="Supprimer cet e-mail"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </fieldset>
+
+                {/* Téléphones */}
+                <fieldset className="space-y-2 p-3.5 rounded-2xl bg-slate-50/60 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/80">
+                    <div className="flex items-center justify-between">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            <Phone size={13} className="text-primary" /> Numéro de téléphone
+                        </label>
+                        <button
+                            type="button"
+                            className="btn btn-ghost btn-xs text-primary hover:bg-primary/10 rounded-lg gap-1 font-semibold active:scale-95 transition-all"
+                            onClick={() => setPhones((values) => [...values, ""])}
+                        >
+                            <Plus size={14} /> Ajouter
+                        </button>
+                    </div>
+                    {phones.map((phone, index) => (
+                        <div key={`phone-${index}`} className="flex gap-2 items-center">
+                            <input
+                                type="tel"
+                                className="input input-bordered w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                placeholder="Ex: +237 6xx xx xx xx"
+                                value={phone}
+                                onChange={(event) => setPhones((values) => values.map((value, i) => i === index ? event.target.value : value))}
+                            />
+                            {phones.length > 1 && (
+                                <button
+                                    type="button"
+                                    className="btn btn-ghost btn-square text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-xl shrink-0 transition-colors"
+                                    onClick={() => setPhones((values) => removeAt(values, index))}
+                                    title="Supprimer ce numéro"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </fieldset>
+
+                {/* Poste & Entreprise */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <fieldset className="space-y-1.5">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="jobTitle">
+                            <Briefcase size={13} /> Poste / Fonction
+                        </label>
+                        <input
+                            type="text"
+                            id="jobTitle"
+                            className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="Ex: Développeur Full-Stack"
+                            value={jobTitle}
+                            onChange={(event) => setJobTitle(event.target.value)}
+                        />
+                    </fieldset>
+
+                    <fieldset className="space-y-1.5">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyName">
+                            <Building2 size={13} /> Nom de l'entreprise
+                        </label>
+                        <input
+                            type="text"
+                            id="companyName"
+                            className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="Ex: Mayem Solutions"
+                            value={companyName}
+                            onChange={(event) => setCompanyName(event.target.value)}
+                        />
+                    </fieldset>
+                </div>
+
+                {/* Adresse & Site web */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <fieldset className="space-y-1.5">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyAddress">
+                            <MapPin size={13} /> Adresse
+                        </label>
+                        <input
+                            type="text"
+                            id="companyAddress"
+                            className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="Ex: Yaoundé, Cameroun"
+                            value={companyAddress}
+                            onChange={(event) => setCompanyAddress(event.target.value)}
+                        />
+                    </fieldset>
+
+                    <fieldset className="space-y-1.5">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="companyWebsite">
+                            <Globe size={13} /> Site web
+                        </label>
+                        <input
+                            type="text"
+                            id="companyWebsite"
+                            className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="Ex: https://entreprise.com"
+                            value={companyWebsite}
+                            onChange={(event) => setCompanyWebsite(event.target.value)}
+                        />
+                    </fieldset>
+                </div>
+
+                {/* Domaine & Tag */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <fieldset className="space-y-1.5">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="domainOfActivity">
+                            <Briefcase size={13} /> Domaine d'activité
+                        </label>
+                        <select
+                            id="domainOfActivity"
+                            className="select select-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                            value={domainOfActivity}
+                            onChange={(event) => setDomainOfActivity(event.target.value)}
+                        >
+                            <option value="" key="undefined">Aucun domaine d'activité</option>
+                            {DOMAINS_OF_ACTIVITY.map((domain) => (
+                                <option key={domain.value} value={domain.value}>
+                                    {domain.label}
+                                </option>
+                            ))}
+                        </select>
+                    </fieldset>
+
+                    <fieldset className="space-y-1.5">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400" htmlFor="tag">
+                            <TagIcon size={13} /> Tag
+                        </label>
+                        <select
+                            id="tag"
+                            className="select select-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                            value={tagId}
+                            onChange={(event) => setTagId(event.target.value)}
+                        >
+                            <option value="" key="undefined">Aucun tag</option>
+                            {tags.map((tag) => (
+                                <option key={tag.tag_id} value={tag.tag_id}>
+                                    {tag.name}
+                                </option>
+                            ))}
+                        </select>
+                    </fieldset>
+                </div>
+            </div>
+
+            {/* 3. Pied de page Fixe */}
+            <div className="shrink-0 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/80 px-5 py-4">
+                <button
+                    className="btn btn-ghost hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all active:scale-95"
                     type="button"
                     onClick={onClose}
                     disabled={loading}
@@ -322,7 +376,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                     Annuler
                 </button>
                 <button
-                    className="btn btn-primary w-1/2 rounded-xl shadow-md shadow-primary/20"
+                    className="btn btn-primary rounded-xl px-6 shadow-md shadow-primary/25 active:scale-95 transition-all font-semibold"
                     type="submit"
                     disabled={loading}
                 >

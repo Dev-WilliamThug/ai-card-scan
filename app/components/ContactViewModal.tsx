@@ -12,8 +12,9 @@ import {
   Trash2, 
   Copy, 
   Check, 
-  MessageCircle, 
-  Sparkles
+  MessageCircle,
+  Briefcase,
+  Share2
 } from "lucide-react";
 
 export interface Tag {
@@ -21,13 +22,6 @@ export interface Tag {
   name?: string;
   label?: string;
   color: string;
-}
-
-export interface Company {
-  company_id?: string;
-  name: string;
-  address?: string;
-  website?: string;
 }
 
 export interface EmailItem {
@@ -40,33 +34,39 @@ export interface PhoneItem {
   telephone: string;
 }
 
+export interface SocialLinkItem {
+  social_id?: string;
+  platform?: string;
+  url: string;
+}
+
+// Interface alignée avec le nouveau schéma Prisma
 export interface Contact {
-  id?: string;
   contact_id?: string;
+  id?: string; // Fallback pour compatibilité
   firstName: string;
   lastName?: string;
   jobTitle?: string;
-  role?: string;
-  
-  // Supporte objet Company ou chaîne simple
-  company?: Company | string;
-  
-  // Supporte tableaux Prisma ou chaînes simples
-  email?: string;
-  emails?: EmailItem[];
-  
-  phone?: string;
-  phones?: PhoneItem[];
-  
-  address?: string;
-  website?: string;
-  notes?: string;
-  avatarUrl?: string;
-  cardImageUrl?: string;
-  
+
+  companyName?: string;
+  companyAddress?: string;
+  companyWebsite?: string;
+  domainOfActivity?: string;
+
+  tag_id?: string;
   tag?: Tag;
-  tags?: Tag[];
-  createdAt?: string;
+  tags?: Tag[]; // Fallback si reçu sous forme de tableau
+
+  emails?: EmailItem[];
+  email?: string; // Fallback
+
+  phones?: PhoneItem[];
+  phone?: string; // Fallback
+
+  socialLinks?: SocialLinkItem[];
+
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 interface ContactDetailModalProps {
@@ -85,7 +85,6 @@ export function ContactDetailModal({
   onDelete
 }: ContactDetailModalProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [showCardImageModal, setShowCardImageModal] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -100,36 +99,41 @@ export function ContactDetailModal({
 
   if (!isOpen || !contact) return null;
 
-  // --- Normalisation sécurisée des données ---
-  const contactId = contact.contact_id || contact.id || "";
-  const roleTitle = contact.jobTitle || contact.role || "";
-  
-  const companyName = typeof contact.company === "object" ? contact.company?.name : contact.company;
-  const companyAddress = (typeof contact.company === "object" ? contact.company?.address : null) || contact.address;
-  const companyWebsite = (typeof contact.company === "object" ? contact.company?.website : null) || contact.website;
 
-  // Récupération complète de tous les numéros de téléphone (tableau ou champ simple)
+  const contactId = contact.contact_id || contact.id || "";
+  const jobTitle = contact.jobTitle || "";
+  
+
+  const companyName = contact.companyName || "";
+  const companyAddress = contact.companyAddress || "";
+  const companyWebsite = contact.companyWebsite || "";
+  const domainOfActivity = contact.domainOfActivity || "";
+
+  
   const allPhones: string[] = contact.phones?.length
     ? contact.phones.map((p) => p.telephone).filter(Boolean)
     : contact.phone
       ? [contact.phone]
       : [];
 
-  // Récupération complète de toutes les adresses email (tableau ou champ simple)
+
   const allEmails: string[] = contact.emails?.length
     ? contact.emails.map((e) => e.email).filter(Boolean)
     : contact.email
       ? [contact.email]
       : [];
 
-  // Numéros et emails principaux pour les boutons d'action rapide
+
+  const socialLinks = contact.socialLinks || [];
+
+
   const primaryPhone = allPhones[0] || "";
   const primaryEmail = allEmails[0] || "";
 
-  const normalizedTags: Tag[] = contact.tags?.length 
-    ? contact.tags 
-    : contact.tag 
-      ? [contact.tag] 
+  const normalizedTags: Tag[] = contact.tag 
+    ? [contact.tag] 
+    : contact.tags?.length 
+      ? contact.tags 
       : [];
 
   const cleanPhoneForWhatsApp = primaryPhone ? primaryPhone.replace(/[^0-9]/g, "") : "";
@@ -148,10 +152,9 @@ export function ContactDetailModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      {/* Fenêtre de la Pop-up */}
+
       <div className="relative flex flex-col w-full max-w-lg max-h-[90vh] rounded-2xl sm:rounded-3xl bg-white shadow-2xl border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800 text-slate-800 dark:text-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
-        
-        {/* 1. Header Fixe */}
+
         <div className="shrink-0 flex items-center justify-between border-b border-slate-100 bg-white px-4 py-3 sm:px-6 sm:py-4 dark:border-slate-800 dark:bg-slate-900">
           <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
             Fiche Contact
@@ -188,51 +191,46 @@ export function ContactDetailModal({
           </div>
         </div>
 
-        {/* 2. Zone défilante autonome */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-6 scrollbar-none [&::-webkit-scrollbar]:hidden">
 
-          {/* Profil Principal */}
+
           <div className="flex flex-col items-center text-center min-w-0">
-            {contact.avatarUrl ? (
-              <img
-                src={contact.avatarUrl}
-                alt={contact.firstName}
-                className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl object-cover shadow-md ring-2 ring-primary/20"
-              />
-            ) : (
-              <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-primary/10 text-xl sm:text-2xl font-bold text-primary shadow-inner">
-                {initials}
-              </div>
-            )}
+            <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-primary/10 text-xl sm:text-2xl font-bold text-primary shadow-inner">
+              {initials || "??"}
+            </div>
 
             <h2 className="mt-3 text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 max-w-full truncate px-2">
               {contact.firstName} {contact.lastName ?? ""}
             </h2>
 
-            {(roleTitle || companyName) && (
+            {(jobTitle || companyName) && (
               <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 max-w-full truncate px-2">
-                {roleTitle} {roleTitle && companyName && "•"}{" "}
+                {jobTitle} {jobTitle && companyName && "•"}{" "}
                 <span className="text-primary">{companyName}</span>
               </p>
             )}
 
-            {/* Tags */}
-            {normalizedTags.length > 0 && (
-              <div className="mt-3 flex flex-wrap justify-center gap-1.5">
-                {normalizedTags.map((t) => (
-                  <span
-                    key={t.tag_id}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-300"
-                  >
-                    <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full shrink-0" style={{ backgroundColor: t.color }} />
-                    {t.name || t.label}
-                  </span>
-                ))}
-              </div>
-            )}
+
+            <div className="mt-3 flex flex-wrap justify-center items-center gap-1.5">
+              {domainOfActivity && domainOfActivity !== "AUTRE" && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-blue-200/80 bg-blue-50 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs font-semibold text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300">
+                  <Briefcase className="h-3 w-3" />
+                  {domainOfActivity}
+                </span>
+              )}
+
+              {normalizedTags.map((t) => (
+                <span
+                  key={t.tag_id}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-300"
+                >
+                  <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full shrink-0" style={{ backgroundColor: t.color }} />
+                  {t.name || t.label}
+                </span>
+              ))}
+            </div>
           </div>
 
-          {/* Actions Rapides (Utilisent le 1er numéro / 1er email) */}
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {primaryPhone ? (
               <a
@@ -288,43 +286,15 @@ export function ContactDetailModal({
             )}
           </div>
 
-          {/* Aperçu Carte Scannée */}
-          {contact.cardImageUrl && (
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-3 sm:p-3.5 dark:border-slate-800/60 dark:bg-slate-800/30 space-y-2">
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
-                <span className="flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
-                  Carte numérisée
-                </span>
-                <button
-                  onClick={() => setShowCardImageModal(true)}
-                  className="text-primary hover:underline text-xs"
-                >
-                  Agrandir
-                </button>
-              </div>
 
-              <div 
-                onClick={() => setShowCardImageModal(true)}
-                className="group relative h-32 sm:h-36 w-full cursor-pointer overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-800"
-              >
-                <img
-                  src={contact.cardImageUrl}
-                  alt="Carte scannée"
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Coordonnées Détaillées (Affiche TOUS les numéros et emails) */}
           <div className="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 dark:border-slate-800/60 dark:bg-slate-800/30">
             <h3 className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Coordonnées
+              Coordonnées & Informations
             </h3>
 
             <div className="divide-y divide-slate-200/60 dark:divide-slate-800">
-              {/* Liste de TOUS les numéros de téléphone */}
+             
+              {/* Téléphones */}
               {allPhones.map((phone, index) => {
                 const fieldKey = `phone-${index}`;
                 return (
@@ -353,7 +323,7 @@ export function ContactDetailModal({
                 );
               })}
 
-              {/* Liste de TOUTES les adresses email */}
+              {/* Emails */}
               {allEmails.map((email, index) => {
                 const fieldKey = `email-${index}`;
                 return (
@@ -392,12 +362,23 @@ export function ContactDetailModal({
                 </div>
               )}
 
+              {/* Domaine d'activité */}
+              {domainOfActivity && (
+                <div className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0 min-w-0">
+                  <Briefcase className="h-4 w-4 text-slate-400 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] text-slate-400">Secteur d'activité</p>
+                    <p className="text-xs sm:text-sm font-medium truncate block">{domainOfActivity}</p>
+                  </div>
+                </div>
+              )}
+
               {companyAddress && (
                 <div className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0 min-w-0">
                   <MapPin className="h-4 w-4 text-slate-400 shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <p className="text-[10px] text-slate-400">Adresse</p>
-                    <p className="text-xs sm:text-sm font-medium break-words">{companyAddress}</p>
+                    <p className="text-[10px] text-slate-400">Adresse de l'entreprise</p>
+                    <p className="text-xs sm:text-sm font-medium wrap-break-words">{companyAddress}</p>
                   </div>
                 </div>
               )}
@@ -418,45 +399,32 @@ export function ContactDetailModal({
                   </div>
                 </div>
               )}
+
+
+              {socialLinks.map((social, idx) => (
+                <div key={social.social_id || idx} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0 min-w-0">
+                  <Share2 className="h-4 w-4 text-slate-400 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] text-slate-400">
+                      Réseau Social {social.platform ? `(${social.platform})` : ""}
+                    </p>
+                    <a 
+                      href={social.url.startsWith("http") ? social.url : `https://${social.url}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-xs sm:text-sm font-medium text-primary hover:underline truncate block"
+                    >
+                      {social.url}
+                    </a>
+                  </div>
+                </div>
+              ))}
+
             </div>
           </div>
-
-          {/* Notes */}
-          {contact.notes && (
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-3.5 sm:p-4 dark:border-slate-800/60 dark:bg-slate-800/30 space-y-1">
-              <h3 className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">
-                Notes
-              </h3>
-              <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300 break-words">
-                {contact.notes}
-              </p>
-            </div>
-          )}
 
         </div>
       </div>
-
-      {/* Pop-up Carte Agrandie */}
-      {showCardImageModal && contact.cardImageUrl && (
-        <div 
-          className="fixed inset-0 z-60 flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
-          onClick={() => setShowCardImageModal(false)}
-        >
-          <div className="relative max-w-xl w-full">
-            <button
-              onClick={() => setShowCardImageModal(false)}
-              className="absolute -top-10 right-0 text-white hover:text-slate-300 p-1"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            <img
-              src={contact.cardImageUrl}
-              alt="Carte grand format"
-              className="w-full rounded-2xl shadow-2xl object-contain max-h-[80vh]"
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

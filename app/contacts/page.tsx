@@ -188,7 +188,7 @@ export default function ContactsPage() {
           </label>
           <select
             id="domain-filter"
-            className="select select-bordered select-sm rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 min-w-[220px] flex-1 sm:flex-none sm:max-w-xs"
+            className="select select-bordered select-sm rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 min-w-55 flex-1 sm:flex-none sm:max-w-xs"
             value={selectedDomain}
             onChange={(event) => setSelectedDomain(event.target.value)}
           >
@@ -299,9 +299,8 @@ export default function ContactsPage() {
           onDelete={(id) => deleteContact(id)}
         />
 
-        {/* --- Modale Formulaire (Création / Édition) --- */}
         <dialog ref={modalRef} className="modal">
-          <div className="modal-box p-0 max-w-2xl rounded-2xl">
+          <div className="modal-box overflow-hidden p-0 max-w-2xl rounded-2xl">
             <FormContact
               key={formKey}
               contact={contactToEdit}
