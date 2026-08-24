@@ -1,6 +1,5 @@
 "use client"
 import { Header } from "@/app/components/Header";
-import { ButtonScan } from "@/app/components/ButtonScan";
 import { FileInput } from "@/app/components/FileInput";
 import { SideBar } from "@/app/components/SideBar";
 import { useState } from "react";
@@ -25,7 +24,6 @@ export default function scan_page() {
                 {!scannedData ?
                     (<>
                         <div className="h-1/3 flex flex-col gap-4">
-                            <ButtonScan />
                             <FileInput onScanComplete={handleScanComplete} />
                         </div>
                     </>
