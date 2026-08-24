@@ -6,7 +6,7 @@ import { FormContact, type ContactDetails, DOMAINS_OF_ACTIVITY } from "@/app/com
 import { FormTag } from "@/app/components/FormTag";
 import { ContactDetailModal, Contact } from "@/app/components/ContactViewModal";
 import { SideBar } from "@/app/components/SideBar";
-import { UserRoundPlus, UserSearch, Loader, Tag as TagIcon, X, Plus } from "lucide-react";
+import { UserRoundPlus, UserSearch, Loader, Tag as TagIcon, X, Plus, RefreshCw } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Tag } from "@prisma/client";
 
@@ -24,6 +24,7 @@ export default function ContactsPage() {
 
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
 
@@ -75,6 +76,14 @@ export default function ContactsPage() {
     }
   }, [searchInput, selectedTagId, selectedDomain]);
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([loadContacts(true), fetchTags()]);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -163,8 +172,19 @@ export default function ContactsPage() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
-            {isSearching && <Loader className="h-4 w-4 animate-spin text-primary shrink-0" />}
+            {isSearching && !isRefreshing && <Loader className="h-4 w-4 animate-spin text-primary shrink-0" />}
           </label>
+
+          <button
+            className="btn btn-ghost btn-square rounded-xl shrink-0 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60"
+            type="button"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            title="Rafraîchir la liste"
+            aria-label="Rafraîchir la liste des contacts"
+          >
+            <RefreshCw className={`h-5 w-5 text-slate-600 dark:text-slate-300 ${isRefreshing ? "animate-spin" : ""}`} />
+          </button>
 
           <button
             className="btn btn-primary rounded-xl shrink-0 gap-2 font-medium shadow-sm hover:shadow-md transition-all"

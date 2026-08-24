@@ -166,7 +166,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                             type="text"
                             id="firstName"
                             className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                            placeholder="Ex: William"
+                            placeholder="Ex: Jhon"
                             value={firstName}
                             onChange={(event) => setFirstName(event.target.value)}
                         />
@@ -180,7 +180,7 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
                             type="text"
                             id="lastName"
                             className="input input-bordered w-full bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                            placeholder="Ex: Duval"
+                            placeholder="Ex: Doe"
                             value={lastName}
                             onChange={(event) => setLastName(event.target.value)}
                         />

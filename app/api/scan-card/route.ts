@@ -42,7 +42,7 @@ Champs vides si introuvables : "" ou [].
 
 Pour domainOfActivity, déduis le secteur à partir du poste et de l'entreprise.
 Renvoie une clé exacte parmi : ${domainList}.
-Exemples : opticien → SANTE_MEDICAL, développeur → INFORMATIQUE_DIGITAL, avocat → CONSEIL_JURIDIQUE_RH.
+Exemples : opticien → SANTE_MEDICAL, développeur → INFORMATIQUE_DIGITAL, avocat → CONSEIL_JURIDIQUE_RH, etc.
 Utilise AUTRE uniquement si aucun secteur n'est identifiable.
 `;
 
