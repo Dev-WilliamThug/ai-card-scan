@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isValidDomain, resolveDomain } from "@/lib/domainsOfActivity";
 
+export function OPTIONS() {
+  return new NextResponse(null, { status: 204 });
+}
+
 const includeRelations = {
   tag: true,
   emails: { orderBy: { createdAt: "asc" } },

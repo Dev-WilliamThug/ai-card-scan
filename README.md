@@ -1,29 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Card Scan
 
-## Getting Started
+L'application est séparée en deux modules Next.js indépendants :
 
-First, run the development server:
+- `Frontend` : l'interface utilisateur, disponible sur `http://localhost:3000`.
+- `Backend` : l'API, Prisma, Better Auth et l'analyse OCR, disponible sur `http://localhost:3001`.
+
+Le frontend appelle toujours `/api/...`. Sa configuration Next.js relaie ces requêtes vers le backend, ce qui préserve les cookies de session et évite tout changement visuel ou fonctionnel dans l'interface.
+
+## Installation
+
+Depuis la racine du projet :
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copiez `Backend/.env.example` dans `Backend/.env` puis renseignez les variables de base de données, d'authentification et d'OCR. Le fichier existant a déjà été déplacé dans ce dossier pendant la séparation.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Démarrage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Dans deux terminaux :
 
+```bash
+npm run dev:backend
+```
 
+```bash
+npm run dev:frontend
+```
 
-## Deploy on Vercel
+Le proxy du frontend cible `http://localhost:3001` par défaut. Pour une autre adresse de backend, définissez `BACKEND_URL` dans `Frontend/.env.local`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Le backend fournit notamment :
+
+- `GET, POST /api/contact`
+- `PATCH, DELETE /api/contact/:id`
+- `GET, POST /api/tag`
+- `POST /api/scan-card`
+- `/api/auth/*`
+
+Les en-têtes CORS autorisent le frontend configuré par `FRONTEND_URL` (par défaut `http://localhost:3000`).

@@ -1,45 +1,10 @@
 {
-  "name": "ai-card-scan",
-  "version": "0.1.0",
+  "name": "ai-card-scan-workspace",
   "private": true,
+  "workspaces": ["Frontend", "Backend"],
   "scripts": {
-    "dev": "next dev -H 0.0.0.0 -p 3001",
-    "build": "prisma generate && next build",
-    "db:migrate": "prisma migrate deploy",
-    "db:generate": "prisma generate",
-    "db:fix-supabase": "node scripts/fix-supabase-env.mjs",
-    "db:copy-local-to-supabase": "node scripts/migrate-local-to-supabase.mjs",
-    "db:convert-local-domain": "node scripts/convert-local-domain-to-text.mjs",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@better-auth/infra": "^0.3.6",
-    "@google/genai": "^2.13.0",
-    "@prisma/adapter-pg": "^7.8.0",
-    "@supabase/ssr": "^0.12.4",
-    "@supabase/supabase-js": "^2.112.3",
-    "better-auth": "^1.6.23",
-    "lucide-react": "^1.24.0",
-    "next": "16.2.10",
-    "next-auth": "^5.0.0-beta.31",
-    "next-themes": "^0.4.6",
-    "pg": "^8.22.0",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
-  },
-  "devDependencies": {
-    "@prisma/client": "^7.8.0",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/pg": "^8.20.0",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "daisyui": "^5.6.18",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.10",
-    "prisma": "^7.8.0",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "dev:frontend": "npm --workspace ai-card-scan-frontend run dev",
+    "dev:backend": "npm --workspace ai-card-scan-backend run dev",
+    "build": "npm --workspace ai-card-scan-frontend run build && npm --workspace ai-card-scan-backend run build"
   }
 }

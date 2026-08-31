@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { DOMAINS_OF_ACTIVITY, resolveDomain } from "@/lib/domainsOfActivity";
 
+export function OPTIONS() {
+  return new NextResponse(null, { status: 204 });
+}
+
 export async function POST(request: Request) {
   try {
     const apiKey = process.env.OPENROUTER_API_KEY;
@@ -24,27 +28,27 @@ export async function POST(request: Request) {
     const domainList = DOMAINS_OF_ACTIVITY.map((d) => `${d.value} (${d.label})`).join(", ");
 
     const prompt = `Tu es un assistant OCR expert en cartes de visite.
-    Extrais les coordonnées et renvoie UNIQUEMENT un objet JSON valide :
+Extrais les coordonnées et renvoie UNIQUEMENT un objet JSON valide :
 
-    {
-      "firstName": "Prénom",
-      "lastName": "Nom",
-      "jobTitle": "Poste",
-      "companyName": "Entreprise",
-      "companyAddress": "Adresse",
-      "companyWebsite": "Site web",
-      "domainOfActivity": "SANTE_MEDICAL",
-      "emails": ["email@exemple.com"],
-      "phones": ["+33123456789"]
-    }
+{
+  "firstName": "Prénom",
+  "lastName": "Nom",
+  "jobTitle": "Poste",
+  "companyName": "Entreprise",
+  "companyAddress": "Adresse",
+  "companyWebsite": "Site web",
+  "domainOfActivity": "SANTE_MEDICAL",
+  "emails": ["email@exemple.com"],
+  "phones": ["+33123456789"]
+}
 
-    Champs vides si introuvables : "" ou [].
+Champs vides si introuvables : "" ou [].
 
-    Pour domainOfActivity, déduis le secteur à partir du poste et de l'entreprise.
-    Renvoie une clé exacte parmi : ${domainList}.
-    Exemples : opticien → SANTE_MEDICAL, développeur → INFORMATIQUE_DIGITAL, avocat → CONSEIL_JURIDIQUE_RH, etc.
-    Utilise AUTRE uniquement si aucun secteur n'est identifiable.
-    `;
+Pour domainOfActivity, déduis le secteur à partir du poste et de l'entreprise.
+Renvoie une clé exacte parmi : ${domainList}.
+Exemples : opticien → SANTE_MEDICAL, développeur → INFORMATIQUE_DIGITAL, avocat → CONSEIL_JURIDIQUE_RH, etc.
+Utilise AUTRE uniquement si aucun secteur n'est identifiable.
+`;
 
 
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {

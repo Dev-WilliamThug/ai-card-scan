@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export function OPTIONS() {
+    return new NextResponse(null, { status: 204 });
+}
+
 export async function GET(request: Request) {
 
     try {

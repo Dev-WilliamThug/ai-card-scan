@@ -15,6 +15,7 @@ export const auth = betterAuth({
     },
 
     trustedOrigins: [
+        process.env.FRONTEND_URL ?? "http://localhost:3002",
         "http://localhost:3001",
         "http://192.168.137.1:3001",
         "aicardscan://",             
