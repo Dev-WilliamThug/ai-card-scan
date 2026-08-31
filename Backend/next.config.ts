@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 import path from "node:path";
 
-const frontendOrigin = process.env.FRONTEND_URL ?? "http://localhost:3000";
+const frontendOrigin = process.env.FRONTEND_URL ?? "http://localhost:3002";
 
 const nextConfig: NextConfig = {
   turbopack: {

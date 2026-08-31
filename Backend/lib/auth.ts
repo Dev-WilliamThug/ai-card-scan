@@ -15,12 +15,9 @@ export const auth = betterAuth({
     },
 
     trustedOrigins: [
-        process.env.FRONTEND_URL ?? "http://localhost:3002",
-        "http://localhost:3001",
-        "http://192.168.137.1:3001",
+        process.env.FRONTEND_URL!,
         "aicardscan://",             
         "https://*.vercel.app",
-        "exp://192.168.137.1:8081",
     ],
 
     plugins: [
