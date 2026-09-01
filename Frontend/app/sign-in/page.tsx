@@ -60,6 +60,7 @@ export default function SignInPage() {
             placeholder="kamgapascal@gmail.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </fieldset>
 
@@ -77,6 +78,7 @@ export default function SignInPage() {
             placeholder="*******"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </fieldset>
 
