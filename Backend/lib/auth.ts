@@ -13,6 +13,12 @@ export const auth = betterAuth({
         enabled: true,
         autoSignIn: false,
     },
+    advanced: {
+        defaultCookieAttributes: {
+            sameSite: "none",
+            secure: true
+        },
+    },
 
     trustedOrigins: [
         process.env.FRONTEND_URL! ?? "http://localhost:3002",
