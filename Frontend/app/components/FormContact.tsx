@@ -107,7 +107,8 @@ function FormContact({ onClose, contact, scannedData, onSaved }: ContactFormProp
         setMessage("");
         try {
             setLoading(true);
-            const response = await fetch(contact ? `/api/contact/${contact.contact_id}` : "/api/contact", {
+            const baseUrl = 'https://ai-card-scan-backend.vercel.app';
+            const response = await fetch(contact ? `${baseUrl}/api/contact/${contact.contact_id}` : `${baseUrl}/api/contact`, {
                 method: contact ? "PATCH" : "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

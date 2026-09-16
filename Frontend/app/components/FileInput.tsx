@@ -54,8 +54,9 @@ export function FileInput({ onScanComplete }: FileInputProps) {
     try {
       const formData = new FormData();
       formData.append("file", file);
-
-      const response = await fetch("/api/scan-card", {
+            
+      const baseUrl = 'https://ai-card-scan-backend.vercel.app';
+      const response = await fetch(`${baseUrl}/api/scan-card`, {
         method: "POST",
         body: formData,
       });
